@@ -36,7 +36,6 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
       {{-- Tabel Kehadiran Staff (Dulu) --}}
       <div class="bg-white dark:bg-gray-800 p-6 shadow sm:rounded-lg">
         <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Kehadiran Staff</h3>
@@ -82,7 +81,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </x-app-layout>

@@ -26,6 +26,11 @@
                         {{ __('Siswa') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('staff.index')" :active="request()->routeIs('staff.index')">
+                        {{ __('Staff') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
