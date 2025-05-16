@@ -7,9 +7,47 @@ use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = Siswa::all();
-        return view('siswa', compact('siswa'));
+        $query = Siswa::query();
+
+        // Filter kelas jika ada
+        if ($request->filled('kelas')) {
+            $query->where('kelas', $request->kelas);
+        }
+
+        // Filter tahun, default ke tahun ini
+        $tahun = $request->input('tahun', date('Y'));
+        $query->where('tahun', $tahun);
+
+        $siswa = $query->get();
+
+        // Ambil daftar kelas unik untuk dropdown
+        $kelasList = Siswa::select('kelas')->distinct()->pluck('kelas');
+
+        return view('siswa', compact('siswa', 'kelasList', 'tahun'));
+    }
+
+    public function create()
+    {
+        return view('create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nis' => 'required|numeric',
+            'nama' => 'required|string|max:255',
+            'kelas' => 'required|string|max:20',
+            'tahun' => 'required|numeric',
+            'alamat' => 'required|string|max:255',
+            'nomor_telepon' => 'required|string|max:20',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+        ]);
+
+        Siswa::create($validated);
+
+        return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan.');
     }
 }
