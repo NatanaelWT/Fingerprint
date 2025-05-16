@@ -9,6 +9,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900 dark:text-gray-100">
+
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold">Daftar Siswa</h3>
             <a href="{{ route('siswa.create') }}"
@@ -16,14 +17,14 @@
               + Tambah Siswa
             </a>
           </div>
+
           <form method="GET" class="mb-4 flex flex-wrap gap-4">
             <div>
               <label for="kelas" class="block mb-1">Filter Kelas</label>
               <select name="kelas" id="kelas" class="p-2 rounded dark:bg-gray-700 dark:text-white">
                 <option value="">Semua</option>
                 @foreach ($kelasList as $k)
-                  <option value="{{ $k }}" {{ request('kelas') == $k ? 'selected' : '' }}>{{ $k }}
-                  </option>
+                  <option value="{{ $k }}" {{ request('kelas') == $k ? 'selected' : '' }}>{{ $k }}</option>
                 @endforeach
               </select>
             </div>
@@ -38,7 +39,6 @@
               <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
             </div>
           </form>
-
 
           <div class="overflow-x-auto">
             <table class="min-w-full table-auto border-collapse">
