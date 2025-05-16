@@ -6,6 +6,10 @@ use App\Http\Controllers\SiswaController;
 
 Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa');
 
+Route::get('/staff', function () {
+    return view('staff');
+})->middleware(['auth', 'verified'])->name('staff');
+
 Route::get('/', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -13,6 +17,10 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/kehadiran', function () {
+    return view('kehadiran');
+})->middleware(['auth', 'verified'])->name('kehadiran');
 
 Route::get('/kehadiran', function () {
     return view('kehadiran');

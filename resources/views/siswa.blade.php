@@ -14,6 +14,7 @@
                 <table class="min-w-full table-auto border-collapse">
                     <thead>
                         <tr>
+                            <th class="px-4 py-2 text-left">No</th>
                             <th class="px-4 py-2 text-left">Nama</th>
                             <th class="px-4 py-2 text-left">Alamat</th>
                             <th class="px-4 py-2 text-left">Nomor Telepon</th>
@@ -24,6 +25,7 @@
                     <tbody>
                         @foreach ($siswa as $s)
                             <tr class="bg-gray-100 dark:bg-gray-700">
+                                <td class="px-4 py-2">{{ $s->no }}</td>
                                 <td class="px-4 py-2">{{ $s->nama }}</td>
                                 <td class="px-4 py-2">{{ $s->alamat }}</td>
                                 <td class="px-4 py-2">{{ $s->nomor_telepon }}</td>
