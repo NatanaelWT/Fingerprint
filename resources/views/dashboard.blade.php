@@ -1,40 +1,64 @@
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-      {{ __('Dashboard Absensi Fingerprint') }}
-    </h2>
-  </x-slot>
+    {{-- ISI HALAMAN FULL WIDTH DAN FULL HEIGHT --}}
+    <div class="flex flex-col md:flex-row h-screen w-full bg-gray-900 overflow-hidden">
+        
+      {{-- KIRI --}}
+<div class="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 py-10 md:py-16 space-y-6 bg-[#0F172A]">
+    <h1 class="text-3xl md:text-5xl font-bold text-white leading-tight tracking-wide">
+        Selamat Datang di<br>Dashboard Pengmas <span class="text-indigo-400">Fingerprint</span>
+    </h1>
+    <p class="text-base md:text-lg text-slate-300 leading-relaxed tracking-normal">
+        Kelola data <span class="text-white font-medium">kehadiran</span>, 
+        <span class="text-white font-medium">siswa</span>, dan 
+        <span class="text-white font-medium">staff</span> melalui dashboard ini.
+        <br>
+        Gunakan menu di atas untuk mengelola data dan aktivitas Anda.
+    </p>
 
-  <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-      
-      {{-- Ringkasan Kehadiran Hari Ini --}}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-          <p class="text-gray-500 dark:text-gray-300 text-sm">Siswa Hadir</p>
-          <p class="text-3xl font-bold text-green-600 dark:text-green-400">120</p>
+    {{-- Ringkasan Kehadiran Hari Ini --}}
+    <div class="grid grid-cols-2 gap-4">
+        <div class="bg-gray-800 p-4 rounded shadow">
+            <p class="text-gray-300 text-sm">Siswa Hadir</p>
+            <p class="text-2xl font-bold text-green-400">120</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-          <p class="text-gray-500 dark:text-gray-300 text-sm">Staff Hadir</p>
-          <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">30</p>
+        <div class="bg-gray-800 p-4 rounded shadow">
+            <p class="text-gray-300 text-sm">Staff Hadir</p>
+            <p class="text-2xl font-bold text-blue-400">30</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-          <p class="text-gray-500 dark:text-gray-300 text-sm">Terlambat</p>
-          <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">8</p>
+        <div class="bg-gray-800 p-4 rounded shadow">
+            <p class="text-gray-300 text-sm">Terlambat</p>
+            <p class="text-2xl font-bold text-yellow-400">8</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-          <p class="text-gray-500 dark:text-gray-300 text-sm">Tidak Hadir</p>
-          <p class="text-3xl font-bold text-red-600 dark:text-red-400">15</p>
+        <div class="bg-gray-800 p-4 rounded shadow">
+            <p class="text-gray-300 text-sm">Tidak Hadir</p>
+            <p class="text-2xl font-bold text-red-400">15</p>
         </div>
-      </div>
-
-      {{-- Grafik Dummy Kehadiran (bisa pakai Chart.js jika dinamis) --}}
-      <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Statistik Kehadiran Minggu Ini</h3>
-        <div class="h-40 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-gray-400 dark:text-gray-300">
-          Grafik Kehadiran (placeholder)
-        </div>
-      </div>
     </div>
-  </div>
+</div>
+
+
+        {{-- KANAN --}}
+        <div class="w-full md:w-1/2 h-64 md:h-auto bg-gray-800 relative overflow-hidden"
+             x-data="{
+                active: 0,
+                images: [
+                    '{{ asset('images/1.jpg') }}',
+                    '{{ asset('images/2.jpeg') }}',
+                    '{{ asset('images/3.jpeg') }}'
+                ]
+             }" 
+             x-init="setInterval(() => active = (active + 1) % images.length, 3000)">
+            
+            <template x-for="(image, index) in images" :key="index">
+                <img :src="image" x-show="active === index"
+                     class="w-full h-full object-cover absolute inset-0 transition-opacity duration-700"
+                     x-transition:enter="transition-opacity ease-in duration-700"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition-opacity ease-out duration-700"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0">
+            </template>
+        </div>
+    </div>
 </x-app-layout>
