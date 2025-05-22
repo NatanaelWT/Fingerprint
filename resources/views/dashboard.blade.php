@@ -18,7 +18,7 @@
     {{-- Ringkasan Kehadiran Hari Ini --}}
     <div class="grid grid-cols-2 gap-4">
         <div class="bg-gray-800 p-4 rounded shadow">
-            <p class="text-gray-300 text-sm">Siswa Hadir</p>
+            <p class="text-gray-300 text-sm">Siswa Hadir2</p>
             <p class="text-2xl font-bold text-green-400">120</p>
         </div>
         <div class="bg-gray-800 p-4 rounded shadow">
