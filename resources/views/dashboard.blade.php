@@ -42,7 +42,7 @@
              x-data="{
                 active: 0,
                 images: [
-                    '{{ asset('images/1.jpg') }}',
+                    '{{ asset('images/1.jpeg') }}',
                     '{{ asset('images/2.jpeg') }}',
                     '{{ asset('images/3.jpeg') }}'
                 ]

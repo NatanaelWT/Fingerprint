@@ -10,7 +10,8 @@
       <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900 dark:text-gray-100">
 
-          <div class="flex justify-between items-center mb-4">
+          <!-- Header dan tombol tambah -->
+          <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-semibold">Daftar Siswa</h3>
             <a href="{{ route('siswa.create') }}"
               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
@@ -18,10 +19,13 @@
             </a>
           </div>
 
-          <form method="GET" class="mb-4 flex flex-wrap gap-4">
+          <!-- Filter Form -->
+          <form method="GET" class="mb-6 flex flex-wrap gap-4">
+            <!-- Filter Kelas -->
             <div>
-              <label for="kelas" class="block mb-1">Filter Kelas</label>
-              <select name="kelas" id="kelas" class="p-2 rounded dark:bg-gray-700 dark:text-white">
+              <label for="kelas" class="block mb-1 text-sm font-medium">Filter Kelas</label>
+              <select name="kelas" id="kelas"
+                class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
                 <option value="">Semua</option>
                 @foreach ($kelasList as $k)
                   <option value="{{ $k }}" {{ request('kelas') == $k ? 'selected' : '' }}>{{ $k }}</option>
@@ -29,20 +33,26 @@
               </select>
             </div>
 
+            <!-- Filter Tahun -->
             <div>
-              <label for="tahun" class="block mb-1">Filter Tahun</label>
-              <input type="number" name="tahun" id="tahun" value="{{ request('tahun', $tahun) }}"
-                class="p-2 rounded dark:bg-gray-700 dark:text-white">
+              <label for="tahun" class="block mb-1 text-sm font-medium">Filter Tahun</label>
+              <input type="number" name="tahun" id="tahun"
+                value="{{ request('tahun', $tahun) }}"
+                class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
             </div>
 
+            <!-- Tombol Filter -->
             <div class="flex items-end">
-              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
+              <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                Filter
+              </button>
             </div>
           </form>
 
+          <!-- Tabel Siswa -->
           <div class="overflow-x-auto">
-            <table class="min-w-full table-auto border-collapse">
-              <thead>
+            <table class="min-w-full table-auto border-collapse border border-gray-200 dark:border-gray-700">
+              <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
                   <th class="px-4 py-2 text-left">NIS</th>
                   <th class="px-4 py-2 text-left">Nama</th>
@@ -55,8 +65,8 @@
                 </tr>
               </thead>
               <tbody>
-                @foreach ($siswa as $s)
-                  <tr class="bg-gray-100 dark:bg-gray-700">
+                @forelse ($siswa as $s)
+                  <tr class="border-t border-gray-200 dark:border-gray-700">
                     <td class="px-4 py-2">{{ $s->nis }}</td>
                     <td class="px-4 py-2">{{ $s->nama }}</td>
                     <td class="px-4 py-2">{{ $s->kelas }}</td>
@@ -66,7 +76,13 @@
                     <td class="px-4 py-2">{{ $s->jenis_kelamin }}</td>
                     <td class="px-4 py-2">{{ $s->tahun }}</td>
                   </tr>
-                @endforeach
+                @empty
+                  <tr>
+                    <td colspan="8" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                      Tidak ada data siswa yang ditemukan.
+                    </td>
+                  </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
