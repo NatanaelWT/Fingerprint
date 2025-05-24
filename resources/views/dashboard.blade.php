@@ -26,11 +26,11 @@
             <p class="text-2xl font-bold text-blue-400">30</p>
         </div>
         <div class="bg-gray-800 p-4 rounded shadow">
-            <p class="text-gray-300 text-sm">Terlambat</p>
+            <p class="text-gray-300 text-sm">Siswa Tidak Hadir</p>
             <p class="text-2xl font-bold text-yellow-400">8</p>
         </div>
         <div class="bg-gray-800 p-4 rounded shadow">
-            <p class="text-gray-300 text-sm">Tidak Hadir</p>
+            <p class="text-gray-300 text-sm">Staf Tidak Hadir</p>
             <p class="text-2xl font-bold text-red-400">15</p>
         </div>
     </div>

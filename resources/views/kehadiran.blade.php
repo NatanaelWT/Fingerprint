@@ -23,14 +23,14 @@
 
     <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
         <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Terlambat</p>
+            <p class="text-sm text-gray-400">Siswa Tidak Hadir</p>
             <p class="text-3xl font-bold text-yellow-400">8</p>
         </div>
     </div>
 
     <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
         <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Tidak Hadir</p>
+            <p class="text-sm text-gray-400">Staf Tidak Hadir</p>
             <p class="text-3xl font-bold text-red-400">15</p>
         </div>
     </div>
