@@ -17,10 +17,10 @@ return new class extends Migration
             $table->integer('tahun');
             $table->string('nama');
             $table->string('kelas');
-            $table->string('alamat')->nullable();
-            $table->string('nomor_telepon')->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+            $table->string('alamat');
+            $table->string('nomor_ortu');
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
+            $table->string('id_template');
             $table->timestamps();
         });
     }

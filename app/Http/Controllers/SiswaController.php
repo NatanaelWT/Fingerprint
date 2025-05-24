@@ -41,9 +41,9 @@ class SiswaController extends Controller
             'kelas' => 'required|string|max:20',
             'tahun' => 'required|numeric',
             'alamat' => 'required|string|max:255',
-            'nomor_telepon' => 'required|string|max:20',
-            'tanggal_lahir' => 'required|date',
+            'nomor_ortu' => 'required|string|max:20',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+            'id_template' => 'required|numeric',
         ]);
 
         Siswa::create($validated);

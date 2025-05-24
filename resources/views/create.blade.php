@@ -50,15 +50,15 @@
             <div class="mb-4 md:flex md:space-x-4">
               <!-- Nomor Telepon -->
               <div class="md:w-1/3 mb-4 md:mb-0">
-                <label class="block font-medium mb-1" for="nomor_telepon">Nomor Telepon</label>
-                <input type="text" name="nomor_telepon" id="nomor_telepon"
+                <label class="block font-medium mb-1" for="nomor_ortu">Nomor Orang Tua</label>
+                <input type="text" name="nomor_ortu" id="nomor_ortu"
                   class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
               </div>
 
-              <!-- Tanggal Lahir -->
+              <!-- ID Template -->
               <div class="md:w-1/3 mb-4 md:mb-0">
-                <label class="block font-medium mb-1" for="tanggal_lahir">Tanggal Lahir</label>
-                <input type="date" name="tanggal_lahir" id="tanggal_lahir"
+                <label class="block font-medium mb-1" for="id_template">ID Template</label>
+                <input type="number" name="id_template" id="id_template"
                   class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
               </div>
 

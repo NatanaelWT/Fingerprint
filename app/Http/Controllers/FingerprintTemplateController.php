@@ -8,38 +8,43 @@ use Illuminate\Http\JsonResponse;
 
 class FingerprintTemplateController extends Controller
 {
-    public function getHexData($id): JsonResponse
+    public function getAllHexData(): JsonResponse
     {
-        if (!is_numeric($id) || $id <= 0) {
-            return response()->json(['error' => 'Invalid or missing ID parameter'], 400);
+        // Ambil semua data dari tabel
+        $records = DB::table('fingerprint_templates')->select('id', 'hex_data')->get();
+
+        $output = [];
+
+        foreach ($records as $record) {
+            $allPackets = $this->splitHexTo6Packets($record->hex_data);
+            $packetsForApi = array_slice($allPackets, 0, 4);
+
+            $output[] = [
+                'id' => (int) $record->id,
+                'packets' => $packetsForApi
+            ];
         }
 
-        $record = DB::table('fingerprint_templates')->where('id', $id)->first();
+        return response()->json($output);
+    }
 
-        if (!$record) {
-            return response()->json(['error' => 'Data not found'], 404);
-        }
-
-        $hexString = preg_replace('/[^0-9A-Fa-f]/', '', $record->hex_data);
-        $bytes = str_split($hexString, 2);
-        $totalBytes = count($bytes);
-
-        // Bagi jadi 6 bagian, ambil 4 saja
-        $fullParts = 6;
-        $useParts = 4;
-        $packetSize = ceil($totalBytes / $fullParts);
-
+    private function splitHexTo6Packets($hexString)
+    {
+        $hexString = preg_replace('/[^0-9A-Fa-f]/', '', $hexString);
+        $length = strlen($hexString);
+        $packetLength = ceil($length / 6 / 2) * 2; // Rata-rata per 6 bagian, pastikan genap
         $packets = [];
-        for ($i = 0; $i < $useParts; $i++) {
-            $packet = array_slice($bytes, $i * $packetSize, $packetSize);
-            $packets[] = array_map(function ($b) {
-                return '0x' . strtoupper($b);
-            }, $packet);
+
+        for ($i = 0; $i < 6; $i++) {
+            $start = $i * $packetLength;
+            $packet = substr($hexString, $start, $packetLength);
+            $bytes = str_split($packet, 2);
+            $bytes = array_map(function($byte) {
+                return '0x' . strtoupper($byte);
+            }, $bytes);
+            $packets[] = $bytes;
         }
 
-        return response()->json([
-            'id' => (int) $id,
-            'packets' => $packets,
-        ]);
+        return $packets;
     }
 }

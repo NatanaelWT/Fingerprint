@@ -14,8 +14,7 @@ Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
 Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
 Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
 
-Route::get('/kehadiran/kehadiranstaff', [KehadiranController::class, 'kehadiranstaff'])->name('kehadiran.staff');
-Route::get('/kehadiran/kehadiransiswa', [KehadiranController::class, 'kehadiransiswa'])->name('kehadiran.siswa');
+Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
 
 Route::get('/', function () {
     return view('dashboard');
@@ -24,10 +23,6 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/kehadiran', function () {
-    return view('kehadiran');
-})->middleware(['auth', 'verified'])->name('kehadiran');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -15,9 +15,9 @@ class Siswa extends Model
     'nama',
     'kelas',
     'alamat',
-    'nomor_telepon',
-    'tanggal_lahir',
+    'nomor_ortu',
     'jenis_kelamin',
+    'id_template'
 ];
 
 }

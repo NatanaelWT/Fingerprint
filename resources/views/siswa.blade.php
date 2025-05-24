@@ -58,10 +58,10 @@
                   <th class="px-4 py-2 text-left">Nama</th>
                   <th class="px-4 py-2 text-left">Kelas</th>
                   <th class="px-4 py-2 text-left">Alamat</th>
-                  <th class="px-4 py-2 text-left">Nomor Telepon</th>
-                  <th class="px-4 py-2 text-left">Tanggal Lahir</th>
+                  <th class="px-4 py-2 text-left">Nomor Orang Tua</th>
                   <th class="px-4 py-2 text-left">Jenis Kelamin</th>
                   <th class="px-4 py-2 text-left">Tahun</th>
+                  <th class="px-4 py-2 text-left">ID Template</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,10 +71,10 @@
                     <td class="px-4 py-2">{{ $s->nama }}</td>
                     <td class="px-4 py-2">{{ $s->kelas }}</td>
                     <td class="px-4 py-2">{{ $s->alamat }}</td>
-                    <td class="px-4 py-2">{{ $s->nomor_telepon }}</td>
-                    <td class="px-4 py-2">{{ $s->tanggal_lahir }}</td>
+                    <td class="px-4 py-2">{{ $s->nomor_ortu }}</td>
                     <td class="px-4 py-2">{{ $s->jenis_kelamin }}</td>
                     <td class="px-4 py-2">{{ $s->tahun }}</td>
+                    <td class="px-4 py-2">{{ $s->id_template }}</td>
                   </tr>
                 @empty
                   <tr>

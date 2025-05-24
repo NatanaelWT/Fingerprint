@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\kehadiranstaff;
-use App\Models\kehadiransiswa;
+use App\Models\LogKehadiran;
 
 class KehadiranController extends Controller
 {
-    public function kehadiranstaff()
+    // Di dalam KehadiranController
+    public function index()
     {
-        return view('kehadiran.kehadiranstaff');
-    }
+        $logs = LogKehadiran::with(['siswa'])
+            ->orderBy('check_in', 'desc')
+            ->paginate(20);
 
-    public function kehadiransiswa()
-    {
-        return view('kehadiran.kehadiransiswa');
+        return view('kehadiran', compact('logs'));
     }
 }
