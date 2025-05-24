@@ -21,15 +21,11 @@
 
           <!-- Filter Form -->
           <form method="GET" class="mb-6 flex flex-wrap gap-4 items-end">
-            <!-- Search Jabatan -->
+            <!-- Fitur Search -->
             <div>
-              <label for="jabatan" class="block mb-1 text-sm font-medium">Fitur Pencarian</label>
+              <label class="block mb-1 text-sm font-medium">Fitur Pencarian</label>
               <input
-                type="text"
-                name="jabatan"
-                id="jabatan"
-                value="{{ old('jabatan', $jabatan) }}"
-                placeholder="Cari jabatan..."
+                placeholder="Cari..."
                 class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
             </div>
@@ -142,7 +138,6 @@
             </div>
 
           </div> <!-- End Flex -->
-
         </div>
       </div>
     </div>
