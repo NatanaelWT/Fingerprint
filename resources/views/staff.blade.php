@@ -20,72 +20,128 @@
           </div>
 
           <!-- Filter Form -->
-          <form method="GET" class="mb-6 flex flex-wrap gap-4">
-            <!-- Filter Jabatan -->
+          <form method="GET" class="mb-6 flex flex-wrap gap-4 items-end">
+            <!-- Search Jabatan -->
             <div>
-              <label for="jabatan" class="block mb-1 text-sm font-medium">Filter Jabatan</label>
-              <select name="jabatan" id="jabatan"
-                class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                <option value="">Semua</option>
-                @foreach ($jabatanList as $j)
-                  <option value="{{ $j }}" {{ request('jabatan') == $j ? 'selected' : '' }}>
-                    {{ $j }}
-                  </option>
-                @endforeach
-              </select>
+              <label for="jabatan" class="block mb-1 text-sm font-medium">Fitur Pencarian</label>
+              <input
+                type="text"
+                name="jabatan"
+                id="jabatan"
+                value="{{ old('jabatan', $jabatan) }}"
+                placeholder="Cari jabatan..."
+                class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              >
             </div>
 
             <!-- Filter Tahun -->
             <div>
               <label for="tahun" class="block mb-1 text-sm font-medium">Filter Tahun</label>
-              <input type="number" name="tahun" id="tahun"
-                value="{{ request('tahun', $tahun) }}"
-                class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
+              <input
+                type="number"
+                name="tahun"
+                id="tahun"
+                value="{{ old('tahun', $tahun) }}"
+                class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              >
+            </div>
+
+            <!-- Filter Tanggal -->
+            <div>
+              <label for="tanggal" class="block mb-1 text-sm font-medium">Filter Tanggal</label>
+              <input
+                type="date"
+                name="tanggal"
+                id="tanggal"
+                value="{{ old('tanggal', $tanggal) }}"
+                class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              >
             </div>
 
             <!-- Tombol Filter -->
-            <div class="flex items-end">
+            <div>
               <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                 Filter
               </button>
             </div>
           </form>
 
-          <!-- Tabel Staff -->
-          <div class="overflow-x-auto">
-            <table class="min-w-full table-auto border-collapse border border-gray-200 dark:border-gray-700">
-              <thead class="bg-gray-100 dark:bg-gray-700">
-                <tr>
-                  <th class="px-4 py-2 text-left">NIP</th>
-                  <th class="px-4 py-2 text-left">Nama</th>
-                  <th class="px-4 py-2 text-left">Jabatan</th>
-                  <th class="px-4 py-2 text-left">Alamat</th>
-                  <th class="px-4 py-2 text-left">Nomor Telepon</th>
-                  <th class="px-4 py-2 text-left">Jenis Kelamin</th>
-                  <th class="px-4 py-2 text-left">Tahun</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse ($staff as $s)
-                  <tr class="border-t border-gray-200 dark:border-gray-700">
-                    <td class="px-4 py-2">{{ $s->nip }}</td>
-                    <td class="px-4 py-2">{{ $s->nama }}</td>
-                    <td class="px-4 py-2">{{ $s->jabatan }}</td>
-                    <td class="px-4 py-2">{{ $s->alamat }}</td>
-                    <td class="px-4 py-2">{{ $s->nomor_telepon }}</td>
-                    <td class="px-4 py-2">{{ $s->jenis_kelamin }}</td>
-                    <td class="px-4 py-2">{{ $s->tahun }}</td>
-                  </tr>
-                @empty
-                  <tr>
-                    <td colspan="7" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                      Tidak ada data staff yang ditemukan.
-                    </td>
-                  </tr>
-                @endforelse
-              </tbody>
-            </table>
-          </div>
+          <!-- Dua tabel berdampingan -->
+          <div class="flex flex-col lg:flex-row gap-6 overflow-x-auto">
+
+            <!-- Tabel Staff -->
+            <div class="flex-1 min-w-[600px] overflow-auto">
+              <div class="bg-white dark:bg-gray-800 rounded shadow p-4">
+                <h4 class="text-md font-semibold mb-3">Data Staff</h4>
+                <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
+                  <thead class="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">NIP</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Nama</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Jabatan</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Alamat</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Nomor Telepon</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Jenis Kelamin</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Tahun</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($staff as $s)
+                      <tr>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->nip }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left">{{ $s->nama }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->jabatan }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left">{{ $s->alamat }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->nomor_telepon }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->jenis_kelamin }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->tahun }}</td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="7" class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
+                          Tidak ada data staff yang ditemukan.
+                        </td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tabel Log -->
+            <div class="flex-1 min-w-[600px] overflow-auto">
+              <div class="bg-white dark:bg-gray-800 rounded shadow p-4">
+                <h4 class="text-md font-semibold mb-3">Kehadiran Staff</h4>
+                <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
+                  <thead class="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">NIP</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Nama</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Waktu</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($logs as $log)
+                      <tr>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $log->nip }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left">{{ $log->nama }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $log->waktu }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left">{{ $log->keterangan }}</td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="4" class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
+                          Tidak ada data kehadiran yang ditemukan.
+                        </td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div> <!-- End Flex -->
 
         </div>
       </div>
