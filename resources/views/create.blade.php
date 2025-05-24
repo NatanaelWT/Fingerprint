@@ -24,7 +24,9 @@
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nis">NIS</label>
                 <input type="text" name="nis" id="nis"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
+                  inputmode="numeric" pattern="\d*" required
+                  oninput="this.value = this.value.replace(/\D/g, '')">
               </div>
 
               <!-- Kelas -->
@@ -39,7 +41,8 @@
             <div class="mb-4">
               <label class="block font-medium mb-1" for="nama">Nama</label>
               <input type="text" name="nama" id="nama"
-                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
+                required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
             </div>
 
             <div class="mb-4">
@@ -52,7 +55,9 @@
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nomor_ortu">Nomor Orang Tua</label>
                 <input type="text" name="nomor_ortu" id="nomor_ortu"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
+                  maxlength="13" inputmode="numeric" pattern="\d*" required
+                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)">
               </div>
 
               <!-- ID Template -->
@@ -73,7 +78,6 @@
                 </select>
               </div>
             </div>
-
 
             <div class="flex justify-end">
               <a href="{{ route('siswa.index') }}"

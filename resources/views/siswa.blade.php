@@ -68,9 +68,10 @@
 
           <!-- Tabel Siswa -->
           <div class="overflow-x-auto">
-            <table class="min-w-full table-auto border-collapse border border-gray-200 dark:border-gray-700">
+            <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
               <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
+<<<<<<< HEAD
                   <th class="px-4 py-2 text-left">NIS</th>
                   <th class="px-4 py-2 text-left">Nama</th>
                   <th class="px-4 py-2 text-left">Kelas</th>
@@ -79,10 +80,21 @@
                   <th class="px-4 py-2 text-left">Alamat</th>
                   <th class="px-4 py-2 text-left">Masuk</th>
                   <th class="px-4 py-2 text-left">Pulang</th>
+=======
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">NIS</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Nama</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Kelas</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Alamat</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Nomor Orang Tua</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Jenis Kelamin</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Tahun</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">ID Template</th>
+>>>>>>> 1deb1740ad9b1aac7dfa82f66aa1db965de1c95e
                 </tr>
               </thead>
               <tbody>
                 @forelse ($siswa as $s)
+<<<<<<< HEAD
                   <tr class="border-t border-gray-200 dark:border-gray-700">
                     <td class="px-4 py-2">{{ $s->nis }}</td>
                     <td class="px-4 py-2">{{ $s->nama }}</td>
@@ -92,10 +104,21 @@
                     <td class="px-4 py-2">{{ $s->alamat }}</td>
                     <td class="px-4 py-2">{{ $s->masuk }}</td>
                     <td class="px-4 py-2">{{ $s->pulang }}</td>
+=======
+                  <tr>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->nis }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->nama }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->kelas }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->alamat }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->nomor_ortu }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->jenis_kelamin }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->tahun }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->id_template }}</td>
+>>>>>>> 1deb1740ad9b1aac7dfa82f66aa1db965de1c95e
                   </tr>
                 @empty
                   <tr>
-                    <td colspan="8" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                    <td colspan="8" class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
                       Tidak ada data siswa yang ditemukan.
                     </td>
                   </tr>

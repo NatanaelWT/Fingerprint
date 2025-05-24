@@ -41,7 +41,7 @@ class SiswaController extends Controller
             'kelas' => 'required|string|max:20',
             'tahun' => 'required|numeric',
             'alamat' => 'required|string|max:255',
-            'nomor_ortu' => 'required|string|max:20',
+            'nomor_ortu' => 'required|string|max:13',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'id_template' => 'required|numeric',
         ]);
