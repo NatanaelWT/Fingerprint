@@ -79,6 +79,8 @@
                       <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Nomor Telepon</th>
                       <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Jenis Kelamin</th>
                       <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Tahun</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Masuk</th>
+                      <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-center">Pulang</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -91,10 +93,12 @@
                         <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->nomor_telepon }}</td>
                         <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->jenis_kelamin }}</td>
                         <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->tahun }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->masuk }}</td>
+                        <td class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-center">{{ $s->pulang }}</td>
                       </tr>
                     @empty
                       <tr>
-                        <td colspan="7" class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="9" class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
                           Tidak ada data staff yang ditemukan.
                         </td>
                       </tr>
@@ -107,7 +111,7 @@
             <!-- Tabel Log -->
             <div class="flex-1 min-w-[600px] overflow-auto">
               <div class="bg-white dark:bg-gray-800 rounded shadow p-4">
-                <h4 class="text-md font-semibold mb-3">Kehadiran Staff</h4>
+                <h4 class="text-md font-semibold mb-3">Log Kehadiran Staff</h4>
                 <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
                   <thead class="bg-gray-100 dark:bg-gray-700">
                     <tr>
