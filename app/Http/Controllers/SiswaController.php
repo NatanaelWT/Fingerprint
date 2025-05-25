@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class SiswaController extends Controller
 {
@@ -11,21 +12,43 @@ class SiswaController extends Controller
     {
         $query = Siswa::query();
 
+        // Tahun default: tahun sekarang
+        $tahun = $request->filled('tahun') ? $request->tahun : now()->year;
+
+        // Tanggal default: hari ini
+        $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
+
         // Filter kelas jika ada
         if ($request->filled('kelas')) {
             $query->where('kelas', $request->kelas);
         }
 
-        // Filter tahun, default ke tahun ini
-        $tahun = $request->input('tahun', date('Y'));
-        $query->where('tahun', $tahun);
+        // Filter tahun
+        if ($tahun) {
+            $query->where('tahun', $tahun);
+        }
 
-        $siswa = $query->get();
+        // Filter tanggal (created_at atau bisa disesuaikan)
+        if ($tanggal) {
+            $query->whereDate('created_at', $tanggal);
+        }
 
-        // Ambil daftar kelas unik untuk dropdown
+        // Filter pencarian nama atau NIS
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nis', 'like', "%{$search}%");
+            });
+        }
+
+        // Ambil hasil query
+        $siswa = $query->paginate(10)->withQueryString();
+
+        // Daftar kelas unik
         $kelasList = Siswa::select('kelas')->distinct()->pluck('kelas');
 
-        return view('siswa', compact('siswa', 'kelasList', 'tahun'));
+        return view('siswa', compact('siswa', 'kelasList', 'tahun', 'tanggal'));
     }
 
     public function create()
@@ -36,7 +59,7 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nis' => 'required|numeric',
+            'nis' => 'required|numeric|unique:siswa,nis',
             'nama' => 'required|string|max:255',
             'kelas' => 'required|string|max:20',
             'tahun' => 'required|numeric',

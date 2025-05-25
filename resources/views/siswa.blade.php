@@ -37,7 +37,7 @@
             <div>
               <label for="tahun" class="block mb-1 text-sm font-medium">Filter Tahun</label>
               <input type="number" name="tahun" id="tahun"
-                value="{{ request('tahun', $tahun) }}"
+                value="{{ request('tahun', now()->year) }}"
                 class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
             </div>
 
@@ -45,7 +45,7 @@
             <div>
               <label for="tanggal" class="block mb-1 text-sm font-medium">Filter Tanggal</label>
               <input type="date" name="tanggal" id="tanggal"
-                value="{{ request('tanggal') }}"
+                value="{{ request('tanggal', now()->toDateString()) }}"
                 class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
             </div>
 
@@ -79,6 +79,8 @@
                   <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Jenis Kelamin</th>
                   <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Tahun</th>
                   <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">ID Template</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Masuk</th>
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Pulang</th>
                 </tr>
               </thead>
               <tbody>
@@ -92,10 +94,12 @@
                     <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->jenis_kelamin }}</td>
                     <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->tahun }}</td>
                     <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->id_template }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->masuk }}</td>
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->pulang }}</td>
                   </tr>
                 @empty
                   <tr>
-                    <td colspan="8"
+                    <td colspan="10"
                       class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
                       Tidak ada data siswa yang ditemukan.
                     </td>
