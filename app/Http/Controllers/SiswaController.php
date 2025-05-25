@@ -30,7 +30,7 @@ class SiswaController extends Controller
 
     public function create()
     {
-        return view('create');
+        return view('create_siswa');
     }
 
     public function store(Request $request)

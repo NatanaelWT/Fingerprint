@@ -46,4 +46,9 @@ class StaffController extends Controller
 
         return view('staff', compact('jabatanList', 'tahun', 'tanggal', 'jabatan', 'staff', 'logs'));
     }
+
+    public function create()
+    {
+        return view('create_staff');
+    }
 }
