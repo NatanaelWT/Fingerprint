@@ -7,34 +7,50 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
+
       {{-- Kartu Statistik --}}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
           <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Siswa Hadir</p>
-            <p class="text-3xl font-bold text-green-400">120</p>
+            <p class="text-sm text-gray-400">Total Siswa</p>
+            <p class="text-3xl font-bold text-white">{{ $totalStudents }}</p>
           </div>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
           <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Staff Hadir</p>
-            <p class="text-3xl font-bold text-blue-400">30</p>
+            <p class="text-sm text-gray-400">Masuk</p>
+            <p class="text-3xl font-bold text-green-400">{{ $checkInCount }}</p>
           </div>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
           <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Siswa Tidak Hadir</p>
-            <p class="text-3xl font-bold text-yellow-400">8</p>
+            <p class="text-sm text-gray-400">Pulang</p>
+            <p class="text-3xl font-bold text-blue-400">{{ $checkOutCount }}</p>
           </div>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
           <div class="flex flex-col items-start">
-            <p class="text-sm text-gray-400">Staf Tidak Hadir</p>
-            <p class="text-3xl font-bold text-red-400">15</p>
+            <p class="text-sm text-gray-400">Filter Tanggal</p>
+            <form method="GET" class="w-full space-y-2">
+              <input type="date" name="date" value="{{ request('date') ?? date('Y-m-d') }}"
+                max="{{ date('Y-m-d') }}"
+                class="mt-2 w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+              <div class="flex space-x-2">
+                <button type="submit"
+                  class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                  Terapkan
+                </button>
+                @if (request()->has('date'))
+                  <a href="{{ route('kehadiran.index') }}"
+                    class="w-full mt-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Reset
+                  </a>
+                @endif
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -57,8 +73,10 @@
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">{{ $log->siswa->nis ?? '-' }}</td>
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">{{ $log->siswa->nama ?? 'Unknown' }}</td>
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">{{ $log->fingerprint_id }}</td>
-                <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">{{ $log->check_in->translatedFormat('d F Y H:i:s') }}</td>
-                <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">{{ $log->keterangan ?? '-' }}</td>
+                <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
+                  {{ $log->check_in->translatedFormat('d F Y H:i:s') }}</td>
+                <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
+                  {{ $log->determineStatus($log->check_in) }}</td>
               </tr>
             @empty
               <tr>
@@ -71,7 +89,7 @@
 
       {{-- Pagination --}}
       <div class="mt-4">
-        {{ $logs->links() }}
+        {{ $logs->appends(request()->query())->links() }}
       </div>
     </div>
   </div>

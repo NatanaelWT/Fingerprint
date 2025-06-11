@@ -9,48 +9,66 @@ use Illuminate\Support\Carbon;
 class SiswaController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Siswa::query();
+{
+    $query = Siswa::query();
 
-        // Tahun default: tahun sekarang
-        $tahun = $request->filled('tahun') ? $request->tahun : now()->year;
+    // Tahun default: tahun sekarang
+    $tahun = $request->filled('tahun') ? $request->tahun : now()->year;
 
-        // Tanggal default: hari ini
-        $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
+    // Tanggal default: hari ini
+    $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
 
-        // Filter kelas jika ada
-        if ($request->filled('kelas')) {
-            $query->where('kelas', $request->kelas);
-        }
-
-        // Filter tahun
-        if ($tahun) {
-            $query->where('tahun', $tahun);
-        }
-
-        // Filter tanggal (created_at atau bisa disesuaikan)
-        if ($tanggal) {
-            $query->whereDate('created_at', $tanggal);
-        }
-
-        // Filter pencarian nama atau NIS
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('nis', 'like', "%{$search}%");
-            });
-        }
-
-        // Ambil hasil query
-        $siswa = $query->paginate(10)->withQueryString();
-
-        // Daftar kelas unik
-        $kelasList = Siswa::select('kelas')->distinct()->pluck('kelas');
-
-        return view('siswa', compact('siswa', 'kelasList', 'tahun', 'tanggal'));
+    // Filter kelas jika ada
+    if ($request->filled('kelas')) {
+        $query->where('kelas', $request->kelas);
     }
 
+    // Filter tahun
+    if ($tahun) {
+        $query->where('tahun', $tahun);
+    }
+
+    // Filter pencarian nama atau NIS
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('nama', 'like', "%{$search}%")
+              ->orWhere('nis', 'like', "%{$search}%");
+        });
+    }
+
+    // Eager load logs kehadiran untuk tanggal yang dipilih
+    $query->with(['logs' => function($q) use ($tanggal) {
+        $q->whereDate('check_in', $tanggal);
+    }]);
+
+    // Ambil hasil query dengan paginasi
+    $siswa = $query->paginate(10)->withQueryString();
+
+    // Tambahkan atribut masuk dan pulang untuk setiap siswa
+    foreach ($siswa->items() as $s) {
+        // Cari log masuk (06:00 - 09:59)
+        $masukLog = $s->logs->filter(function($log) {
+            $time = $log->check_in->format('H:i:s');
+            return $time >= '03:00:00' && $time <= '09:59:59';
+        })->first();
+
+        // Cari log pulang (15:00 - 17:59)
+        $pulangLog = $s->logs->filter(function($log) {
+            $time = $log->check_in->format('H:i:s');
+            return $time >= '15:00:00' && $time <= '23:59:59';
+        })->first();
+
+        // Tambahkan atribut virtual
+        $s->masuk = $masukLog ? $masukLog->check_in->format('H:i') : '-';
+        $s->pulang = $pulangLog ? $pulangLog->check_in->format('H:i') : '-';
+    }
+
+    // Daftar kelas unik
+    $kelasList = Siswa::select('kelas')->distinct()->pluck('kelas');
+
+    return view('siswa', compact('siswa', 'kelasList', 'tahun', 'tanggal'));
+}
     public function create()
     {
         return view('create_siswa');
@@ -59,7 +77,7 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nis' => 'required|numeric|unique:siswa,nis',
+            'nis' => 'required|numeric|unique:siswas,nis',
             'nama' => 'required|string|max:255',
             'kelas' => 'required|string|max:20',
             'tahun' => 'required|numeric',

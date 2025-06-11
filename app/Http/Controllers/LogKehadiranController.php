@@ -18,8 +18,8 @@ class LogKehadiranController extends Controller
         $currentDate = $currentTime->toDateString();
 
         // Cek apakah waktu saat ini dalam rentang absensi yang diizinkan
-        $isMasukTime = $currentHour >= 6 && $currentHour < 10;  // 06:00 - 09:59
-        $isPulangTime = $currentHour >= 15 && $currentHour < 18; // 15:00 - 17:59
+        $isMasukTime = $currentHour >= 3 && $currentHour < 9;  // 06:00 - 09:59
+        $isPulangTime = $currentHour >= 15 && $currentHour < 23; // 15:00 - 17:59
 
         if (!$isMasukTime && !$isPulangTime) {
             return response()->json(['message' => 'Bukan waktu absensi yang valid'], 400);
@@ -27,12 +27,12 @@ class LogKehadiranController extends Controller
 
         // Tentukan tipe absensi dan batas waktu
         if ($isMasukTime) {
-            $start = '06:00:00';
+            $start = '03:00:00';
             $end = '09:59:59';
             $type = 'masuk';
         } else {
             $start = '15:00:00';
-            $end = '17:59:59';
+            $end = '23:59:59';
             $type = 'pulang';
         }
 

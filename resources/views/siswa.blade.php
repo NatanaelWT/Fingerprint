@@ -7,9 +7,7 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 text-gray-900 dark:text-gray-100">
-
+        <div class="text-gray-900 dark:text-gray-100">
           <!-- Header dan tombol tambah -->
           <div class="flex justify-between items-center mb-6">
             <h3 class="text-lg font-semibold">Daftar Siswa</h3>
@@ -23,7 +21,7 @@
           <form method="GET" class="mb-6 flex flex-wrap gap-4">
             <!-- Filter Kelas -->
             <div>
-              <label for="kelas" class="block mb-1 text-sm font-medium">Filter Kelas</label>
+              <label for="kelas" class="block mb-1 text-sm font-medium">Kelas</label>
               <select name="kelas" id="kelas"
                 class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
                 <option value="">Semua</option>
@@ -35,7 +33,7 @@
 
             <!-- Filter Tahun -->
             <div>
-              <label for="tahun" class="block mb-1 text-sm font-medium">Filter Tahun</label>
+              <label for="tahun" class="block mb-1 text-sm font-medium">Tahun Ajaran</label>
               <input type="number" name="tahun" id="tahun"
                 value="{{ request('tahun', now()->year) }}"
                 class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
@@ -43,7 +41,7 @@
 
             <!-- Filter Tanggal -->
             <div>
-              <label for="tanggal" class="block mb-1 text-sm font-medium">Filter Tanggal</label>
+              <label for="tanggal" class="block mb-1 text-sm font-medium">Tanggal</label>
               <input type="date" name="tanggal" id="tanggal"
                 value="{{ request('tanggal', now()->toDateString()) }}"
                 class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
@@ -110,7 +108,6 @@
           </div>
 
         </div>
-      </div>
     </div>
   </div>
 </x-app-layout>
