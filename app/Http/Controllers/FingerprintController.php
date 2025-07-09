@@ -35,7 +35,7 @@ class FingerprintController extends Controller
                 'id' => $missingId,
                 'hex_data' => $hex
             ]);
-            return response()->json(['message' => "Data berhasil disimpan dengan ID $missingId"], 201);
+            return response()->json(['message' => "ID $missingId"], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Gagal menyimpan data', 'error' => $e->getMessage()], 500);
         }

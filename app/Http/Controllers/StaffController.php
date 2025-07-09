@@ -10,51 +10,56 @@ use Illuminate\Support\Carbon;
 class StaffController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Staff::query();
+{
+    $query = Staff::query();
 
-        // Tanggal default: hari ini
-        $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
+    // Tanggal default: hari ini
+    $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
 
-        // Filter pencarian: nama atau NIP
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('nip', 'like', "%{$search}%");
-            });
-        }
-
-        // Eager load logs untuk tanggal yang dipilih
-        $query->with(['logs' => function($q) use ($tanggal) {
-            $q->whereDate('check_in', $tanggal);
-        }]);
-
-        $staff = $query->get();
-
-        // Proses setiap staff untuk menambahkan atribut masuk dan pulang
-        foreach ($staff as $s) {
-            // Cari log masuk (06:00 - 09:59)
-            $masukLog = $s->logs->filter(function($log) {
-                $time = $log->check_in->format('H:i:s');
-                return $time >= '03:00:00' && $time <= '09:59:59';
-            })->first();
-
-            // Cari log pulang (15:00 - 17:59)
-            $pulangLog = $s->logs->filter(function($log) {
-                $time = $log->check_in->format('H:i:s');
-                return $time >= '15:00:00' && $time <= '23:59:59';
-            })->first();
-
-            $s->masuk = $masukLog ? $masukLog->check_in->format('H:i') : '-';
-            $s->pulang = $pulangLog ? $pulangLog->check_in->format('H:i') : '-';
-        }
-        $logs = LogKehadiran::with('staff')
-            ->whereDate('check_in', $tanggal)
-            ->get();
-
-        return view('staff', compact('staff', 'tanggal', 'logs'));
+    // Filter pencarian: nama atau NIP
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('nama', 'like', "%{$search}%")
+              ->orWhere('nip', 'like', "%{$search}%");
+        });
     }
+
+    // Eager load logs untuk tanggal yang dipilih, diurutkan berdasarkan check_in terbaru
+    $query->with(['logs' => function($q) use ($tanggal) {
+        $q->whereDate('check_in', $tanggal)
+          ->orderBy('check_in', 'desc'); // <- Perbaikan di sini
+    }]);
+
+    $staff = $query->get();
+
+    // Proses setiap staff untuk menambahkan atribut masuk dan pulang
+    foreach ($staff as $s) {
+        // Cari log masuk (06:00 - 09:59)
+        $masukLog = $s->logs->filter(function($log) {
+            $time = $log->check_in->format('H:i:s');
+            return $time >= '03:00:00' && $time <= '09:59:59';
+        })->first();
+
+        // Cari log pulang (15:00 - 17:59)
+        $pulangLog = $s->logs->filter(function($log) {
+            $time = $log->check_in->format('H:i:s');
+            return $time >= '15:00:00' && $time <= '23:59:59';
+        })->first();
+
+        $s->masuk = $masukLog ? $masukLog->check_in->format('H:i') : '-';
+        $s->pulang = $pulangLog ? $pulangLog->check_in->format('H:i') : '-';
+    }
+
+    $logs = LogKehadiran::with('staff')
+        ->whereDate('check_in', $tanggal)
+        ->whereHas('staff')
+        ->orderBy('check_in', 'desc') // <- Tambahkan juga di sini jika kamu ingin menampilkan semua log kehadiran urut terbaru
+        ->get();
+
+    return view('staff', compact('staff', 'tanggal', 'logs'));
+}
+
 
     public function create()
     {

@@ -11,7 +11,10 @@ class FingerprintTemplateController extends Controller
     public function getAllHexData(): JsonResponse
     {
         // Ambil semua data dari tabel
-        $records = DB::table('fingerprint_templates')->select('id', 'hex_data')->get();
+        $records = DB::table('fingerprint_templates')
+                 ->select('id', 'hex_data')
+                 ->limit(35)
+                 ->get();
 
         $output = [];
 
