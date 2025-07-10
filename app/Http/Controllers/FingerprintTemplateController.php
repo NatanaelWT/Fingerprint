@@ -13,7 +13,6 @@ class FingerprintTemplateController extends Controller
         // Ambil semua data dari tabel
         $records = DB::table('fingerprint_templates')
                  ->select('id', 'hex_data')
-                 ->limit(35)
                  ->get();
 
         $output = [];

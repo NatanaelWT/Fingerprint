@@ -119,7 +119,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="10"
+                  <td colspan="11"
                     class="px-4 py-4 border border-gray-300 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400">
                     Tidak ada data siswa yang ditemukan.
                   </td>
