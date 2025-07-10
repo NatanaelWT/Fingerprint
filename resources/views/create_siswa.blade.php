@@ -17,23 +17,22 @@
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label for="tahun" class="block font-medium">Tahun</label>
                 <input type="number" name="tahun" id="tahun" value="{{ old('tahun', date('Y')) }}"
-                  class="w-full p-2 rounded dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded dark:bg-gray-700 dark:text-white" required value="{{ old('tahun') }}">
               </div>
 
               <!-- NIS -->
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nis">NIS</label>
                 <input type="text" name="nis" id="nis"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '')">
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" inputmode="numeric" pattern="\d*"
+                  required oninput="this.value = this.value.replace(/\D/g, '')" value="{{ old('nis') }}">
               </div>
 
               <!-- Kelas -->
               <div class="md:w-1/3">
                 <label class="block font-medium mb-1" for="kelas">Kelas</label>
                 <input type="text" name="kelas" id="kelas"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required value="{{ old('kelas') }}">
               </div>
             </div>
 
@@ -41,13 +40,13 @@
             <div class="mb-4">
               <label class="block font-medium mb-1" for="nama">Nama</label>
               <input type="text" name="nama" id="nama"
-                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" value="{{ old('nama') }}">
             </div>
 
             <div class="mb-4">
               <label class="block font-medium mb-1" for="alamat">Alamat</label>
-              <textarea name="alamat" id="alamat" class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required></textarea>
+              <textarea name="alamat" id="alamat" class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>{{ old('id_template') }}</textarea>
             </div>
 
             <div class="mb-4 md:flex md:space-x-4">
@@ -55,23 +54,27 @@
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nomor_ortu">Nomor Orang Tua</label>
                 <input type="text" name="nomor_ortu" id="nomor_ortu"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  maxlength="13" inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)">
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" maxlength="13" inputmode="numeric"
+                  pattern="\d*" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)" value="{{ old('nomor_ortu') }}">
               </div>
 
               <!-- ID Template -->
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="id_template">ID Template</label>
                 <input type="number" name="id_template" id="id_template"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                  value="{{ old('id_template') }}">
+
+                @error('id_template')
+                  <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                @enderror
               </div>
 
               <!-- Jenis Kelamin -->
               <div class="md:w-1/3">
                 <label class="block font-medium mb-1" for="jenis_kelamin">Jenis Kelamin</label>
                 <select name="jenis_kelamin" id="jenis_kelamin"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required value="{{ old('jenis_kelamin') }}">
                   <option value="">-- Pilih --</option>
                   <option value="Laki-laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>

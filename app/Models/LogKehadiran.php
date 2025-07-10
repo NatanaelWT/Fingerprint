@@ -37,7 +37,7 @@ class LogKehadiran extends Model
 
         if ($hour >= 6 && $hour < 10) {
             return 'Masuk';
-        } elseif ($hour >= 15 && $hour < 18) {
+        } elseif ($hour >= 15 && $hour < 24) {
             return 'Pulang';
         }
 

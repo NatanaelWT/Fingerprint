@@ -139,8 +139,8 @@ class LogKehadiranController extends Controller
     {
         $hour = $time->hour;
 
-        if ($hour >= 6 && $hour < 10) return 'Masuk';
-        if ($hour >= 15 && $hour < 18) return 'Pulang';
+        if ($hour >= 3 && $hour < 10) return 'Masuk';
+        if ($hour >= 15 && $hour < 24) return 'Pulang';
         
         return 'Lainnya';
     }

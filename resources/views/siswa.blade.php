@@ -18,17 +18,18 @@
               <input type="hidden" name="tahun" value="{{ request('tahun') }}">
               <input type="hidden" name="tanggal" value="{{ request('tanggal') }}">
               <input type="hidden" name="search" value="{{ request('search') }}">
-              <button type="submit"
-                class="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2 px-4 rounded">
-                📥 Export Excel
+              <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2 px-4 rounded">
+                Export Excel
               </button>
             </form>
 
             <!-- Tombol Tambah Siswa -->
-            <a href="{{ route('siswa.create') }}"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-              + Tambah Siswa
-            </a>
+            @if (optional(Auth::user())->name === 'Admin')
+              <a href="{{ route('siswa.create') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                + Tambah Siswa
+              </a>
+            @endif
           </div>
         </div>
 
@@ -41,7 +42,8 @@
               class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
               <option value="">Semua</option>
               @foreach ($kelasList as $k)
-                <option value="{{ $k }}" {{ request('kelas') == $k ? 'selected' : '' }}>{{ $k }}</option>
+                <option value="{{ $k }}" {{ request('kelas') == $k ? 'selected' : '' }}>{{ $k }}
+                </option>
               @endforeach
             </select>
           </div>
@@ -49,25 +51,21 @@
           <!-- Filter Tahun -->
           <div>
             <label for="tahun" class="block mb-1 text-sm font-medium">Tahun Ajaran</label>
-            <input type="number" name="tahun" id="tahun"
-              value="{{ request('tahun', now()->year) }}"
+            <input type="number" name="tahun" id="tahun" value="{{ request('tahun', now()->year) }}"
               class="p-2 w-32 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
           </div>
 
           <!-- Filter Tanggal -->
           <div>
             <label for="tanggal" class="block mb-1 text-sm font-medium">Tanggal</label>
-            <input type="date" name="tanggal" id="tanggal"
-              value="{{ request('tanggal', now()->toDateString()) }}"
+            <input type="date" name="tanggal" id="tanggal" value="{{ request('tanggal', now()->toDateString()) }}"
               class="p-2 w-48 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
           </div>
 
           <!-- Pencarian -->
           <div>
             <label for="search" class="block mb-1 text-sm font-medium">Pencarian (Nama/NIS)</label>
-            <input type="text" name="search" id="search"
-              value="{{ request('search') }}"
-              placeholder="Cari..."
+            <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Cari..."
               class="p-2 w-56 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600">
           </div>
 
@@ -84,6 +82,9 @@
           <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
             <thead class="bg-gray-100 dark:bg-gray-700">
               <tr>
+                @if (optional(Auth::user())->name === 'Admin')
+                  <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Aksi</th>
+                @endif
                 <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">NIS</th>
                 <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Nama</th>
                 <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Kelas</th>
@@ -99,6 +100,12 @@
             <tbody>
               @forelse ($siswa as $s)
                 <tr>
+                  @if (optional(Auth::user())->name === 'Admin')
+                    <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">
+                      <a href="{{ route('siswa.edit', $s->id) }}"
+                        class="text-blue-500 hover:text-blue-700 mr-2">Edit</a>
+                    </td>
+                  @endif
                   <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->nis }}</td>
                   <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->nama }}</td>
                   <td class="px-4 py-2 border border-gray-300 dark:border-gray-700">{{ $s->kelas }}</td>
