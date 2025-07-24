@@ -13,50 +13,34 @@
             @csrf
             @method('PUT')
 
-            <div class="mb-4 md:flex md:space-x-4">
-              <!-- NIP -->
-              <div class="md:w-1/2 mb-4 md:mb-0">
-                <label class="block font-medium mb-1" for="nip">NIP</label>
-                <input type="text" name="nip" id="nip" value="{{ old('nip', $staff->nip) }}"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '')">
-              </div>
-
-              <!-- Jabatan -->
-              <div class="md:w-1/2">
-                <label class="block font-medium mb-1" for="jabatan">Jabatan</label>
-                <input type="text" name="jabatan" id="jabatan" value="{{ old('jabatan', $staff->jabatan) }}"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
-              </div>
+            <div class="mb-4>
+              <label class="block font-medium mb-1" for="jabatan">Jabatan</label>
+              <input type="text" name="jabatan" id="jabatan" value="{{ old('jabatan', $staff->jabatan) }}"
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
             </div>
 
             <div class="mb-4">
               <label class="block font-medium mb-1" for="nama">Nama</label>
               <input type="text" name="nama" id="nama" value="{{ old('nama', $staff->nama) }}"
-                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
-            </div>
-
-            <div class="mb-4">
-              <label class="block font-medium mb-1" for="alamat">Alamat</label>
-              <textarea name="alamat" id="alamat" class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>{{ old('alamat', $staff->alamat) }}</textarea>
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
             </div>
 
             <div class="mb-4 md:flex md:space-x-4">
               <!-- Nomor Telepon -->
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nomor_telepon">Nomor Telepon</label>
-                <input type="text" name="nomor_telepon" id="nomor_telepon" value="{{ old('nomor_telepon', $staff->nomor_telepon) }}"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  maxlength="13" inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)">
+                <input type="text" name="nomor_telepon" id="nomor_telepon"
+                  value="{{ old('nomor_telepon', $staff->nomor_telepon) }}"
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" maxlength="13" inputmode="numeric"
+                  pattern="\d*" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)">
               </div>
 
               <!-- ID Template -->
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="id_template">ID Template</label>
-                <input type="number" name="id_template" id="id_template" value="{{ old('id_template', $staff->id_template) }}"
+                <input type="number" name="id_template" id="id_template"
+                  value="{{ old('id_template', $staff->id_template) }}"
                   class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
               </div>
 
@@ -66,8 +50,12 @@
                 <select name="jenis_kelamin" id="jenis_kelamin"
                   class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>
                   <option value="">-- Pilih --</option>
-                  <option value="Laki-laki" {{ old('jenis_kelamin', $staff->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                  <option value="Perempuan" {{ old('jenis_kelamin', $staff->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                  <option value="Laki-laki"
+                    {{ old('jenis_kelamin', $staff->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
+                  </option>
+                  <option value="Perempuan"
+                    {{ old('jenis_kelamin', $staff->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan
+                  </option>
                 </select>
               </div>
             </div>
@@ -75,7 +63,8 @@
             <div class="flex justify-end">
               <a href="{{ route('staff.index') }}"
                 class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded mr-2">Batal</a>
-              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Simpan Perubahan</button>
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Simpan
+                Perubahan</button>
             </div>
           </form>
         </div>

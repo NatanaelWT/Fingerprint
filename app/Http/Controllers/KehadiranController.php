@@ -29,7 +29,7 @@ class KehadiranController extends Controller
         
         // Count check-ins hanya untuk siswa dengan template
         $checkInCount = LogKehadiran::whereDate('check_in', $selectedDate)
-            ->whereTime('check_in', '<', '12:00:00')
+            ->whereTime('check_in', '<', '09:00:00')
             ->whereHas('siswa', function($query) {
                 $query->whereNotNull('id_template');
             })
@@ -38,7 +38,7 @@ class KehadiranController extends Controller
         
         // Count check-outs hanya untuk siswa dengan template
         $checkOutCount = LogKehadiran::whereDate('check_in', $selectedDate)
-            ->whereTime('check_in', '>=', '12:00:00')
+            ->whereTime('check_in', '>=', '09:00:00')
             ->whereHas('siswa', function($query) {
                 $query->whereNotNull('id_template');
             })

@@ -47,13 +47,13 @@ class ExportSiswaController extends Controller
         // Cari log masuk (03:00 - 09:59)
         $masukLog = $s->logs->filter(function($log) {
             $time = $log->check_in->format('H:i:s');
-            return $time >= '03:00:00' && $time <= '09:59:59';
+            return $time >= '00:00:00' && $time <= '08:59:59';
         })->first();
 
         // Cari log pulang (15:00 - 23:59)
         $pulangLog = $s->logs->filter(function($log) {
             $time = $log->check_in->format('H:i:s');
-            return $time >= '15:00:00' && $time <= '23:59:59';
+            return $time >= '09:00:00' && $time <= '23:59:59';
         })->first();
 
         $s->masuk = $masukLog ? $masukLog->check_in->format('H:i') : '-';

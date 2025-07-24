@@ -22,8 +22,8 @@ class LogKehadiranController extends Controller
         $currentHour = $currentTime->hour;
         $currentDate = $currentTime->toDateString();
 
-        $isMasukTime = $currentHour >= 3 && $currentHour < 9;
-        $isPulangTime = $currentHour >= 15 && $currentHour < 23;
+        $isMasukTime = $currentHour >= 0 && $currentHour < 9;
+        $isPulangTime = $currentHour >= 9 && $currentHour < 24;
 
         if (!$isMasukTime && !$isPulangTime) {
             return response()->json(['message' => 'Diluar Waktu Absensi'], 400);
@@ -31,11 +31,11 @@ class LogKehadiranController extends Controller
 
         // Tentukan tipe absensi dan rentang waktunya
         if ($isMasukTime) {
-            $start = '03:00:00';
-            $end = '09:59:59';
+            $start = '00:00:00';
+            $end = '08:59:59';
             $type = 'masuk';
         } else {
-            $start = '15:00:00';
+            $start = '09:00:00';
             $end = '23:59:59';
             $type = 'pulang';
         }
@@ -51,21 +51,6 @@ class LogKehadiranController extends Controller
             return response()->json([
                 'message' => "Sudah $type hari ini"
             ], 400);
-        }
-
-        // Cek khusus untuk absensi pulang: harus sudah ada absensi masuk di hari yang sama
-        if ($type === 'pulang') {
-            $masukToday = LogKehadiran::where('fingerprint_id', $validated['fingerprint_id'])
-                ->whereDate('check_in', $currentDate)
-                ->whereTime('check_in', '>=', '03:00:00')
-                ->whereTime('check_in', '<=', '09:59:59')
-                ->exists();
-
-            if (!$masukToday) {
-                return response()->json([
-                    'message' => 'Tidak hadir hari ini'
-                ], 400);
-            }
         }
 
         // Simpan log
@@ -139,8 +124,8 @@ class LogKehadiranController extends Controller
     {
         $hour = $time->hour;
 
-        if ($hour >= 3 && $hour < 10) return 'Masuk';
-        if ($hour >= 15 && $hour < 24) return 'Pulang';
+        if ($hour >= 0 && $hour < 10) return 'Masuk';
+        if ($hour >= 10 && $hour < 24) return 'Pulang';
         
         return 'Lainnya';
     }

@@ -35,9 +35,9 @@ class LogKehadiran extends Model
     {
         $hour = $checkInTime->hour;
 
-        if ($hour >= 6 && $hour < 10) {
+        if ($hour >= 0 && $hour < 9) {
             return 'Masuk';
-        } elseif ($hour >= 15 && $hour < 24) {
+        } elseif ($hour >= 9 && $hour < 24) {
             return 'Pulang';
         }
 

@@ -1,16 +1,11 @@
 <x-app-layout>
-  <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-      {{ __('Siswa') }}
-    </h2>
-  </x-slot>
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="text-gray-900 dark:text-gray-100">
         <!-- Header dan tombol tambah + export -->
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-semibold">Daftar Siswa</h3>
+          <h3 class="text-lg font-semibold">Daftar Siswa ({{ $siswa->count() }})</h3>
           <div class="flex gap-2">
             <!-- Tombol Export Excel -->
             <form method="GET" action="{{ route('siswa.export') }}">
@@ -97,7 +92,7 @@
                 <th class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-left">Pulang</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="siswaTableBody">
               @forelse ($siswa as $s)
                 <tr>
                   @if (optional(Auth::user())->name === 'Admin')
@@ -131,5 +126,51 @@
 
       </div>
     </div>
+    <!-- Pagination Siswa -->
+    <div id="siswaPagination" class="mt-4 flex justify-center gap-2 flex-wrap"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const table = document.getElementById("siswaTableBody");
+        const rows = table.querySelectorAll("tr");
+        const rowsPerPage = 50;
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        const pagination = document.getElementById("siswaPagination");
+
+        function showPage(page) {
+          const start = (page - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+
+          rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? "" : "none";
+          });
+
+          // Highlight active button
+          document.querySelectorAll("#siswaPagination button").forEach((btn, idx) => {
+            const isActive = idx === page - 1;
+            btn.className = isActive ?
+              "px-3 py-1 rounded border border-blue-700 bg-blue-600 text-white" :
+              "px-3 py-1 rounded border border-gray-400 bg-gray-200 text-gray-700 hover:bg-gray-300";
+          });
+        }
+
+        function setupPagination() {
+          pagination.innerHTML = "";
+          for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.className = "px-3 py-1 rounded border border-gray-400 bg-gray-200 text-gray-700 hover:bg-gray-300";
+            btn.addEventListener("click", () => showPage(i));
+            pagination.appendChild(btn);
+          }
+        }
+
+        if (rows.length > 0) {
+          setupPagination();
+          showPage(1);
+        }
+      });
+    </script>
+
   </div>
 </x-app-layout>

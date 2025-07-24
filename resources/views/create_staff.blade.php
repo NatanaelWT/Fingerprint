@@ -12,36 +12,18 @@
           <form method="POST" action="{{ route('staff.store') }}">
             @csrf
 
-            <div class="mb-4 md:flex md:space-x-4">
-
-              <!-- NIS -->
-              <div class="md:w-1/2 mb-4 md:mb-0">
-                <label class="block font-medium mb-1" for="nip">NIP</label>
-                <input type="text" name="nip" id="nip"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '')" value="{{ old('nip') }}">
-              </div>
-
-              <!-- Kelas -->
-              <div class="md:w-1/2">
-                <label class="block font-medium mb-1" for="jabatan">Jabatan</label>
-                <input type="text" name="jabatan" id="jabatan"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required value="{{ old('jabatan') }}">
-              </div>
+            <div class="mb-4">
+              <label class="block font-medium mb-1" for="jabatan">Jabatan</label>
+              <input type="text" name="jabatan" id="jabatan"
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                value="{{ old('jabatan') }}">
             </div>
-
 
             <div class="mb-4">
               <label class="block font-medium mb-1" for="nama">Nama</label>
               <input type="text" name="nama" id="nama"
-                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" value="{{ old('nama') }}">
-            </div>
-
-            <div class="mb-4">
-              <label class="block font-medium mb-1" for="alamat">Alamat</label>
-              <textarea name="alamat" id="alamat" class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required>{{ old('alamat') }}</textarea>
+                class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" value="{{ old('nama') }}">
             </div>
 
             <div class="mb-4 md:flex md:space-x-4">
@@ -49,9 +31,8 @@
               <div class="md:w-1/3 mb-4 md:mb-0">
                 <label class="block font-medium mb-1" for="nomor_telepon">Nomor Telepon</label>
                 <input type="text" name="nomor_telepon" id="nomor_telepon"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-                  maxlength="13" inputmode="numeric" pattern="\d*" required
-                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)"
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" maxlength="13" inputmode="numeric"
+                  pattern="\d*" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)"
                   value="{{ old('nomor_telepon') }}">
               </div>
 
@@ -70,7 +51,8 @@
               <div class="md:w-1/3">
                 <label class="block font-medium mb-1" for="jenis_kelamin">Jenis Kelamin</label>
                 <select name="jenis_kelamin" id="jenis_kelamin"
-                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required value="{{ old('jenis_kelamin') }}">
+                  class="w-full p-2 rounded border dark:bg-gray-700 dark:text-white" required
+                  value="{{ old('jenis_kelamin') }}">
                   <option value="">-- Pilih --</option>
                   <option value="Laki-laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>

@@ -17,12 +17,10 @@ class StaffController extends Controller
         // Tanggal default: hari ini
         $tanggal = $request->filled('tanggal') ? $request->tanggal : now()->toDateString();
 
-        // Filter pencarian: nama atau NIP
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%");
+                $q->where('nama', 'like', "%{$search}%");
             });
         }
 
@@ -36,16 +34,14 @@ class StaffController extends Controller
 
         // Proses setiap staff untuk menambahkan atribut masuk dan pulang
         foreach ($staff as $s) {
-            // Cari log masuk (06:00 - 09:59)
             $masukLog = $s->logs->filter(function ($log) {
                 $time = $log->check_in->format('H:i:s');
-                return $time >= '03:00:00' && $time <= '09:59:59';
+                return $time >= '00:00:00' && $time <= '08:59:59';
             })->first();
 
-            // Cari log pulang (15:00 - 17:59)
             $pulangLog = $s->logs->filter(function ($log) {
                 $time = $log->check_in->format('H:i:s');
-                return $time >= '15:00:00' && $time <= '23:59:59';
+                return $time >= '09:00:00' && $time <= '23:59:59';
             })->first();
 
             $s->masuk = $masukLog ? $masukLog->check_in->format('H:i') : '-';
@@ -70,10 +66,8 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nip' => 'required|unique:staffs,nip',
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
-            'alamat' => 'nullable|string|max:255',
             'nomor_telepon' => 'nullable|string|max:20',
             'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
             'id_template' => [
@@ -97,10 +91,8 @@ class StaffController extends Controller
     public function update(Request $request, Staff $staff)
     {
         $request->validate([
-            'nip' => 'required|unique:staffs,nip,' . $staff->id,
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
-            'alamat' => 'nullable|string|max:255',
             'nomor_telepon' => 'nullable|string|max:20',
             'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
             'id_template' => [

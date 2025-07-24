@@ -48,16 +48,14 @@ class SiswaController extends Controller
 
         // Tambahkan atribut masuk dan pulang untuk setiap siswa
         foreach ($siswa->items() as $s) {
-            // Cari log masuk (06:00 - 09:59)
             $masukLog = $s->logs->filter(function ($log) {
                 $time = $log->check_in->format('H:i:s');
-                return $time >= '03:00:00' && $time <= '09:59:59';
+                return $time >= '00:00:00' && $time <= '08:59:59';
             })->first();
 
-            // Cari log pulang (15:00 - 17:59)
             $pulangLog = $s->logs->filter(function ($log) {
                 $time = $log->check_in->format('H:i:s');
-                return $time >= '15:00:00' && $time <= '23:59:59';
+                return $time >= '09:00:00' && $time <= '23:59:59';
             })->first();
 
             // Tambahkan atribut virtual

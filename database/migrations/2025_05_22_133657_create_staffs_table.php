@@ -13,10 +13,8 @@ return new class extends Migration
 {
     Schema::create('staffs', function (Blueprint $table) {
         $table->id();
-        $table->string('nip')->unique();
         $table->string('nama');
         $table->string('jabatan');
-        $table->string('alamat')->nullable();
         $table->string('nomor_telepon')->nullable();
         $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
         $table->string('id_template');

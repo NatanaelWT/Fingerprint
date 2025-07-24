@@ -16,13 +16,13 @@ class DashboardController extends Controller
         
         $presentCount = LogKehadiran::whereHas('siswa')
             ->whereDate('check_in', $today)
-            ->whereTime('check_in', '<', '10:00:00')
+            ->whereTime('check_in', '<', '09:00:00')
             ->distinct('id')
             ->count('id');
         
         $checkOutCount = LogKehadiran::whereHas('siswa')
             ->whereDate('check_in', $today)
-            ->whereTime('check_in', '>=', '15:00:00')
+            ->whereTime('check_in', '>=', '09:00:00')
             ->count();
 
         return view('dashboard', compact(
