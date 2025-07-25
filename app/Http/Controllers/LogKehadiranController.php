@@ -25,19 +25,15 @@ class LogKehadiranController extends Controller
         $isMasukTime = $currentHour >= 0 && $currentHour < 9;
         $isPulangTime = $currentHour >= 9 && $currentHour < 24;
 
-        if (!$isMasukTime && !$isPulangTime) {
-            return response()->json(['message' => 'Diluar Waktu Absensi'], 400);
-        }
-
         // Tentukan tipe absensi dan rentang waktunya
         if ($isMasukTime) {
             $start = '00:00:00';
             $end = '08:59:59';
-            $type = 'masuk';
+            $type = 'Masuk';
         } else {
             $start = '09:00:00';
             $end = '23:59:59';
-            $type = 'pulang';
+            $type = 'Pulang';
         }
 
         // Cek apakah sudah ada log dengan tipe yang sama di hari ini
@@ -47,9 +43,10 @@ class LogKehadiranController extends Controller
             ->whereTime('check_in', '<=', $end)
             ->exists();
 
+        // Jika sudah absen
         if ($existingLogSameType) {
             return response()->json([
-                'message' => "Sudah $type hari ini"
+                'message' => "$type"
             ], 400);
         }
 
@@ -94,7 +91,7 @@ class LogKehadiranController extends Controller
         }
 
         return response()->json([
-            'message' => "Absensi $type",
+            'message' => "$type",
             'data' => $log
         ], 201);
     }
@@ -124,8 +121,8 @@ class LogKehadiranController extends Controller
     {
         $hour = $time->hour;
 
-        if ($hour >= 0 && $hour < 10) return 'Masuk';
-        if ($hour >= 10 && $hour < 24) return 'Pulang';
+        if ($hour >= 0 && $hour < 9) return 'Masuk';
+        if ($hour >= 9 && $hour < 24) return 'Pulang';
         
         return 'Lainnya';
     }
