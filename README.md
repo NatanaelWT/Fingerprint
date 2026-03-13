@@ -98,8 +98,4 @@ npm run dev
 
 ```bash
 php artisan test
-<<<<<<< HEAD
 ```
-=======
-```
->>>>>>> 88b4e3dbf90c7c3d02312e075ebd6c8f9803d562
