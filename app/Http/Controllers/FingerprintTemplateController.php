@@ -39,6 +39,28 @@ class FingerprintTemplateController extends Controller
 
         return response()->json($output);
     }
+    
+    public function getById($id): JsonResponse
+    {
+        $record = DB::table('fingerprint_templates')
+            ->select('id', 'hex_data')
+            ->where('id', $id)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['message' => 'Template not found'], 404);
+        }
+
+        $allPackets = $this->splitHexTo6Packets($record->hex_data);
+        $packetsForApi = array_slice($allPackets, 0, 4);
+
+        $output = [
+            'id' => (int) $record->id,
+            'packets' => $packetsForApi
+        ];
+
+        return response()->json($output);
+    }
 
     private function splitHexTo6Packets($hexString)
     {

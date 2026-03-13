@@ -8,6 +8,9 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ExportStaffController extends Controller
@@ -48,15 +51,54 @@ class ExportStaffController extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->fromArray([
-            ['Nama', 'Jabatan', 'Nomor Telepon', 'Jenis Kelamin', 'Masuk', 'Pulang']
-        ], null, 'A1');
+        $titleRow = 1;
+        $metaRow = 2;
+        $headerRow = 3;
+        $dataStartRow = 4;
+        $lastColumn = 'F';
 
-        $headerRange = "A1:ZZ1";
-        $sheet->getStyle($headerRange)->getFont()->setBold(true);
-        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $reportDate = Carbon::parse($tanggal);
+        $sheet->setCellValue("A{$titleRow}", 'Rekap Kehadiran Staff - ' . $reportDate->translatedFormat('d F Y'));
+        $sheet->mergeCells("A{$titleRow}:{$lastColumn}{$titleRow}");
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getRowDimension($titleRow)->setRowHeight(26);
 
-        $row = 2;
+        $sheet->setCellValue("A{$metaRow}", 'Tanggal: ' . $reportDate->format('d M Y'));
+        $sheet->mergeCells("A{$metaRow}:D{$metaRow}");
+        $sheet->setCellValue("E{$metaRow}", 'Dicetak: ' . now()->format('d M Y H:i'));
+        $sheet->mergeCells("E{$metaRow}:{$lastColumn}{$metaRow}");
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getFont()->setSize(10)->getColor()->setARGB('FF6B7280');
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("E{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getRowDimension($metaRow)->setRowHeight(20);
+
+        $sheet->setCellValue("A{$headerRow}", 'Nama');
+        $sheet->setCellValue("B{$headerRow}", 'Jabatan');
+        $sheet->setCellValue("C{$headerRow}", 'Nomor Telepon');
+        $sheet->setCellValue("D{$headerRow}", 'Jenis Kelamin');
+        $sheet->setCellValue("E{$headerRow}", 'Masuk');
+        $sheet->setCellValue("F{$headerRow}", 'Pulang');
+
+        $headerRange = "A{$headerRow}:{$lastColumn}{$headerRow}";
+        $sheet->getStyle($headerRange)->getFont()->setBold(true)->getColor()->setARGB('FF111827');
+        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle($headerRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FFF3F4F6');
+        $sheet->getRowDimension($headerRow)->setRowHeight(22);
+
+        $sheet->getColumnDimension('A')->setWidth(24);
+        $sheet->getColumnDimension('B')->setWidth(18);
+        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->getColumnDimension('F')->setWidth(10);
+
+        $row = $dataStartRow;
         foreach ($staff as $s) {
             $sheet->setCellValue("A$row", $s->nama);
             $sheet->setCellValue("B$row", $s->jabatan);
@@ -82,11 +124,17 @@ class ExportStaffController extends Controller
             $row++;
         }
 
-        // ✅ Auto-size semua kolom
-        $highestColumn = $sheet->getHighestColumn();
-        foreach (range('A', $highestColumn) as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+        $lastDataRow = max($dataStartRow, $dataStartRow + $staff->count() - 1);
+        $dataRange = "A{$headerRow}:{$lastColumn}{$lastDataRow}";
+        $sheet->getStyle($dataRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN)
+            ->getColor()->setARGB('FFE5E7EB');
+        $sheet->getStyle($dataRange)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$dataStartRow}:D{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("E{$dataStartRow}:F{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->freezePane("A{$dataStartRow}");
+        $sheet->getDefaultRowDimension()->setRowHeight(-1);
 
         $writer = new Xlsx($spreadsheet);
         $fileName = 'staff_export_' . now()->format('Ymd_His') . '.xlsx';
@@ -122,28 +170,56 @@ class ExportStaffController extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
+        $titleRow = 1;
+        $metaRow = 2;
+        $headerRow = 3;
+        $dataStartRow = 4;
+        $dayColumnStartIndex = 8; // Kolom H
+        $daysInMonth = $start->diffInDays($end) + 1;
+        $lastColumnIndex = 7 + $daysInMonth;
+        $lastColumn = Coordinate::stringFromColumnIndex($lastColumnIndex);
+
+        $title = 'Rekap Kehadiran Staff - ' . $start->translatedFormat('F Y');
+        $sheet->setCellValue("A{$titleRow}", $title);
+        $sheet->mergeCells("A{$titleRow}:{$lastColumn}{$titleRow}");
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getRowDimension($titleRow)->setRowHeight(26);
+
+        $sheet->setCellValue("A{$metaRow}", 'Periode: ' . $start->format('d M Y') . ' - ' . $end->format('d M Y'));
+        $sheet->mergeCells("A{$metaRow}:G{$metaRow}");
+        $sheet->setCellValue("{$lastColumn}{$metaRow}", 'Dicetak: ' . now()->format('d M Y H:i'));
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getFont()->setSize(10)->getColor()->setARGB('FF6B7280');
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("{$lastColumn}{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getRowDimension($metaRow)->setRowHeight(20);
+
         // Header kolom
-        $sheet->setCellValue('A1', 'Nama');
-        $sheet->setCellValue('B1', 'Jabatan');
-        $sheet->setCellValue('C1', 'Nomor Telepon');
-        $sheet->setCellValue('D1', 'Jenis Kelamin');
-        $sheet->setCellValue('E1', 'Hadir');
-        $sheet->setCellValue('F1', 'Telat');
-        $sheet->setCellValue('G1', 'Tidak Absen');
+        $sheet->setCellValue("A{$headerRow}", 'Nama');
+        $sheet->setCellValue("B{$headerRow}", 'Jabatan');
+        $sheet->setCellValue("C{$headerRow}", 'Nomor Telepon');
+        $sheet->setCellValue("D{$headerRow}", 'Jenis Kelamin');
+        $sheet->setCellValue("E{$headerRow}", 'Hadir');
+        $sheet->setCellValue("F{$headerRow}", 'Telat');
+        $sheet->setCellValue("G{$headerRow}", 'Tidak Absen');
 
         // Header tanggal
-        $col = 'H';
+        $colIndex = $dayColumnStartIndex;
         $current = $start->copy();
         while ($current <= $end) {
-            $sheet->setCellValue($col . '1', $current->format('d M'));
-            $sheet->getStyle($col . '1')->getAlignment()->setHorizontal('center');
-            $sheet->getColumnDimension($col)->setWidth(15);
+            $col = Coordinate::stringFromColumnIndex($colIndex);
+            $sheet->setCellValue($col . $headerRow, $current->format('d M'));
+            $sheet->getStyle($col . $headerRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getColumnDimension($col)->setWidth(12);
             $current->addDay();
-            $col++;
+            $colIndex++;
         }
 
         // Isi data staf
-        $row = 2;
+        $row = $dataStartRow;
         foreach ($staffs as $staff) {
             $sheet->setCellValue('A' . $row, $staff->nama);
             $sheet->setCellValue('B' . $row, $staff->jabatan);
@@ -154,7 +230,7 @@ class ExportStaffController extends Controller
             $telat = 0;
             $tidakAbsen = 0;
 
-            $col = 'H';
+            $colIndex = $dayColumnStartIndex;
             $currentDate = $start->copy();
             while ($currentDate <= $end) {
                 $logs = $staff->logs->filter(function ($log) use ($currentDate) {
@@ -175,9 +251,10 @@ class ExportStaffController extends Controller
                 $pulangTime = $pulang ? $pulang->check_in->format('H:i') : '-';
                 $value = "$masukTime / $pulangTime";
 
+                $col = Coordinate::stringFromColumnIndex($colIndex);
                 $cell = $col . $row;
                 $sheet->setCellValue($cell, $value);
-                $sheet->getStyle($cell)->getAlignment()->setHorizontal('center');
+                $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle($cell)->getAlignment()->setWrapText(true);
 
                 if ($masukTime === '-') {
@@ -195,7 +272,7 @@ class ExportStaffController extends Controller
                     ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB($color);
 
-                $col++;
+                $colIndex++;
                 $currentDate->addDay();
             }
 
@@ -207,21 +284,204 @@ class ExportStaffController extends Controller
             $row++;
         }
 
-        // Format header (A1 sampai akhir tanggal): bold + center
-        $headerRange = "A1:ZZ1";
-        $sheet->getStyle($headerRange)->getFont()->setBold(true);
-        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        // Format header (A3 sampai akhir tanggal): bold + center + background
+        $headerRange = "A{$headerRow}:{$lastColumn}{$headerRow}";
+        $sheet->getStyle($headerRange)->getFont()->setBold(true)->getColor()->setARGB('FF111827');
+        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle($headerRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FFF3F4F6');
+        $sheet->getRowDimension($headerRow)->setRowHeight(22);
 
-        // WrapText + Horizontal Center untuk semua kolom
-        foreach (range('A', 'ZZ') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-            $sheet->getStyle($col)->getAlignment()->setWrapText(true);
-        }
+        $sheet->getColumnDimension('A')->setWidth(24);
+        $sheet->getColumnDimension('B')->setWidth(18);
+        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->getColumnDimension('F')->setWidth(10);
+        $sheet->getColumnDimension('G')->setWidth(12);
+
+        $lastDataRow = max($dataStartRow, $dataStartRow + $staffs->count() - 1);
+        $dataRange = "A{$headerRow}:{$lastColumn}{$lastDataRow}";
+        $sheet->getStyle($dataRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN)
+            ->getColor()->setARGB('FFE5E7EB');
+        $sheet->getStyle($dataRange)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$dataStartRow}:D{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("E{$dataStartRow}:{$lastColumn}{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->freezePane('H4');
 
         // Auto height baris
         $sheet->getDefaultRowDimension()->setRowHeight(-1);
 
         $fileName = 'rekap_staff_' . $start->format('F_Y') . '.xlsx';
+
+        return new StreamedResponse(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    public function exportStaffMonth(Request $request, Staff $staff)
+    {
+        $bulan = $request->input('bulan', now()->format('Y-m'));
+        try {
+            $start = Carbon::createFromFormat('Y-m', $bulan)->startOfMonth();
+        } catch (\Exception $e) {
+            $start = now()->startOfMonth();
+            $bulan = $start->format('Y-m');
+        }
+
+        $end = $start->copy()->endOfMonth();
+
+        $logs = $staff->logs()
+            ->whereBetween('check_in', [
+                $start->copy()->startOfDay(),
+                $end->copy()->endOfDay(),
+            ])
+            ->orderBy('check_in')
+            ->get();
+
+        $logsByDate = $logs->groupBy(function ($log) {
+            return $log->check_in->toDateString();
+        });
+
+        $scheduleIn = '07:00';
+        $scheduleOut = '15:30';
+        $lateThreshold = '07:10';
+
+        $formatDuration = function (?string $startTime, ?string $endTime) {
+            if (!$startTime || !$endTime) {
+                return null;
+            }
+
+            $startCarbon = Carbon::createFromFormat('H:i', $startTime);
+            $endCarbon = Carbon::createFromFormat('H:i', $endTime);
+
+            if ($endCarbon->lt($startCarbon)) {
+                return null;
+            }
+
+            $minutes = $startCarbon->diffInMinutes($endCarbon);
+            return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
+        };
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $titleRow = 1;
+        $metaRow = 2;
+        $headerRow = 3;
+        $dataStartRow = 4;
+        $lastColumn = 'H';
+
+        $title = 'Laporan Kehadiran Bulanan - ' . $staff->nama . ' - ' . $start->translatedFormat('F Y');
+        $sheet->setCellValue("A{$titleRow}", $title);
+        $sheet->mergeCells("A{$titleRow}:{$lastColumn}{$titleRow}");
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle("A{$titleRow}:{$lastColumn}{$titleRow}")->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getRowDimension($titleRow)->setRowHeight(26);
+
+        $sheet->setCellValue("A{$metaRow}", 'Periode: ' . $start->format('d M Y') . ' - ' . $end->format('d M Y'));
+        $sheet->mergeCells("A{$metaRow}:D{$metaRow}");
+        $sheet->setCellValue("E{$metaRow}", 'Dicetak: ' . now()->format('d M Y H:i'));
+        $sheet->mergeCells("E{$metaRow}:{$lastColumn}{$metaRow}");
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getFont()->setSize(10)->getColor()->setARGB('FF6B7280');
+        $sheet->getStyle("A{$metaRow}:{$lastColumn}{$metaRow}")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("E{$metaRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getRowDimension($metaRow)->setRowHeight(20);
+
+        $sheet->setCellValue("A{$headerRow}", 'Tanggal');
+        $sheet->setCellValue("B{$headerRow}", 'Jam Masuk');
+        $sheet->setCellValue("C{$headerRow}", 'Scan Masuk');
+        $sheet->setCellValue("D{$headerRow}", 'Datang Terlambat');
+        $sheet->setCellValue("E{$headerRow}", 'Jam Keluar');
+        $sheet->setCellValue("F{$headerRow}", 'Scan Keluar');
+        $sheet->setCellValue("G{$headerRow}", 'Pulang Awal');
+        $sheet->setCellValue("H{$headerRow}", 'Durasi Kerja');
+
+        $headerRange = "A{$headerRow}:{$lastColumn}{$headerRow}";
+        $sheet->getStyle($headerRange)->getFont()->setBold(true)->getColor()->setARGB('FF111827');
+        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle($headerRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('FFF3F4F6');
+        $sheet->getRowDimension($headerRow)->setRowHeight(22);
+
+        $sheet->getColumnDimension('A')->setWidth(24);
+        $sheet->getColumnDimension('B')->setWidth(10);
+        $sheet->getColumnDimension('C')->setWidth(12);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->getColumnDimension('F')->setWidth(12);
+        $sheet->getColumnDimension('G')->setWidth(12);
+        $sheet->getColumnDimension('H')->setWidth(12);
+
+        $row = $dataStartRow;
+        $currentDate = $start->copy();
+        while ($currentDate->lte($end)) {
+            $dateKey = $currentDate->toDateString();
+            $dayLogs = $logsByDate->get($dateKey, collect());
+
+            $masukLog = $dayLogs->first(function ($log) {
+                $time = $log->check_in->format('H:i:s');
+                return $time >= '00:00:00' && $time <= '08:59:59';
+            });
+
+            $pulangLog = $dayLogs->first(function ($log) {
+                $time = $log->check_in->format('H:i:s');
+                return $time >= '09:00:00' && $time <= '23:59:59';
+            });
+
+            $scanMasuk = $masukLog ? $masukLog->check_in->format('H:i') : null;
+            $scanKeluar = $pulangLog ? $pulangLog->check_in->format('H:i') : null;
+
+            $datangTerlambat = null;
+            if ($scanMasuk && $scanMasuk >= $lateThreshold) {
+                $datangTerlambat = $formatDuration($scheduleIn, $scanMasuk);
+            }
+
+            $pulangAwal = null;
+            if ($scanKeluar && $scanKeluar < $scheduleOut) {
+                $pulangAwal = $formatDuration($scanKeluar, $scheduleOut);
+            }
+
+            $durasiKerja = $formatDuration($scanMasuk, $scanKeluar);
+
+            $sheet->setCellValue("A{$row}", $currentDate->translatedFormat('l, d-m-Y'));
+            $sheet->setCellValue("B{$row}", $scheduleIn);
+            $sheet->setCellValue("C{$row}", $scanMasuk ?? '-');
+            $sheet->setCellValue("D{$row}", $datangTerlambat ?? '');
+            $sheet->setCellValue("E{$row}", $scheduleOut);
+            $sheet->setCellValue("F{$row}", $scanKeluar ?? '-');
+            $sheet->setCellValue("G{$row}", $pulangAwal ?? '');
+            $sheet->setCellValue("H{$row}", $durasiKerja ?? '');
+
+            $row++;
+            $currentDate->addDay();
+        }
+
+        $lastDataRow = max($dataStartRow, $row - 1);
+        $dataRange = "A{$headerRow}:{$lastColumn}{$lastDataRow}";
+        $sheet->getStyle($dataRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN)
+            ->getColor()->setARGB('FFE5E7EB');
+        $sheet->getStyle($dataRange)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$dataStartRow}:A{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("B{$dataStartRow}:{$lastColumn}{$lastDataRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->freezePane("A{$dataStartRow}");
+        $sheet->getDefaultRowDimension()->setRowHeight(-1);
+
+        $fileName = 'laporan_staff_' . $staff->id . '_' . $start->format('F_Y') . '.xlsx';
 
         return new StreamedResponse(function () use ($spreadsheet) {
             $writer = new Xlsx($spreadsheet);

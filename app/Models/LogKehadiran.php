@@ -16,11 +16,7 @@ class LogKehadiran extends Model
     protected $casts = [
         'check_in' => 'datetime',
     ];
-    // Di dalam model LogKehadiran
-    public function siswa()
-    {
-        return $this->belongsTo(Siswa::class, 'fingerprint_id', 'id_template');
-    }
+
     public function staff()
     {
         return $this->belongsTo(Staff::class, 'fingerprint_id', 'id_template');

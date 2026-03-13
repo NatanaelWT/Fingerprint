@@ -58,6 +58,226 @@ class StaffController extends Controller
         return view('staff', compact('staff', 'tanggal', 'logs'));
     }
 
+    public function show(Request $request, Staff $staff)
+    {
+        $month = $request->input('bulan', now()->format('Y-m'));
+        try {
+            $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        } catch (\Exception $e) {
+            $month = now()->format('Y-m');
+            $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        }
+
+        $monthEnd = $monthStart->copy()->endOfMonth();
+
+        $logsForMonth = $staff->logs()
+            ->whereBetween('check_in', [
+                $monthStart->copy()->startOfDay(),
+                $monthEnd->copy()->endOfDay(),
+            ])
+            ->orderBy('check_in')
+            ->get();
+
+        $attendanceByDate = [];
+        $logsForMonth
+            ->groupBy(function ($log) {
+                return $log->check_in->toDateString();
+            })
+            ->each(function ($dayLogs, $date) use (&$attendanceByDate) {
+                $masukLog = $dayLogs->first(function ($log) {
+                    $time = $log->check_in->format('H:i:s');
+                    return $time >= '00:00:00' && $time <= '08:59:59';
+                });
+
+                $pulangLog = $dayLogs->first(function ($log) {
+                    $time = $log->check_in->format('H:i:s');
+                    return $time >= '09:00:00' && $time <= '23:59:59';
+                });
+
+                $masukTime = $masukLog ? $masukLog->check_in->format('H:i') : null;
+                $pulangTime = $pulangLog ? $pulangLog->check_in->format('H:i') : null;
+
+                $status = 'Tidak Absen';
+                if ($masukTime) {
+                    $status = $masukTime >= '07:10' ? 'Telat' : 'Hadir';
+                }
+
+                $attendanceByDate[$date] = [
+                    'masuk' => $masukTime,
+                    'pulang' => $pulangTime,
+                    'status' => $status,
+                ];
+            });
+
+        $weeks = [];
+        $week = [];
+        $startOffset = $monthStart->dayOfWeekIso;
+        for ($i = 1; $i < $startOffset; $i++) {
+            $week[] = null;
+        }
+
+        $cursor = $monthStart->copy();
+        while ($cursor->lte($monthEnd)) {
+            $week[] = $cursor->copy();
+            if (count($week) === 7) {
+                $weeks[] = $week;
+                $week = [];
+            }
+            $cursor->addDay();
+        }
+
+        if (count($week) > 0) {
+            while (count($week) < 7) {
+                $week[] = null;
+            }
+            $weeks[] = $week;
+        }
+
+        $summary = [
+            'hadir' => 0,
+            'telat' => 0,
+            'tidak_absen' => 0,
+        ];
+
+        $summaryEnd = $monthEnd->copy();
+        $today = Carbon::today();
+        if ($summaryEnd->gt($today)) {
+            $summaryEnd = $today->copy();
+        }
+
+        if ($summaryEnd->gte($monthStart)) {
+            $countCursor = $monthStart->copy();
+            while ($countCursor->lte($summaryEnd)) {
+                $dateKey = $countCursor->toDateString();
+                $entry = $attendanceByDate[$dateKey] ?? null;
+
+                if (!$entry || $entry['status'] === 'Tidak Absen') {
+                    $summary['tidak_absen']++;
+                } elseif ($entry['status'] === 'Telat') {
+                    $summary['telat']++;
+                } else {
+                    $summary['hadir']++;
+                }
+
+                $countCursor->addDay();
+            }
+        }
+
+        $logs = $staff->logs()
+            ->orderBy('check_in', 'desc')
+            ->paginate(20);
+
+        $monthLabel = $monthStart->translatedFormat('F Y');
+
+        return view('show_staff', compact(
+            'staff',
+            'logs',
+            'month',
+            'monthLabel',
+            'weeks',
+            'attendanceByDate',
+            'summary'
+        ));
+    }
+
+    public function calendar(Request $request)
+    {
+        $month = $request->input('bulan', now()->format('Y-m'));
+        try {
+            $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        } catch (\Exception $e) {
+            $month = now()->format('Y-m');
+            $monthStart = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        }
+
+        $monthEnd = $monthStart->copy()->endOfMonth();
+        $totalStaff = Staff::whereNotNull('id_template')->count();
+
+        $logs = LogKehadiran::with('staff')
+            ->whereBetween('check_in', [
+                $monthStart->copy()->startOfDay(),
+                $monthEnd->copy()->endOfDay(),
+            ])
+            ->whereHas('staff', function ($q) {
+                $q->whereNotNull('id_template');
+            })
+            ->orderBy('check_in')
+            ->get();
+
+        $statsByDate = [];
+        $logs->groupBy(function ($log) {
+            return $log->check_in->toDateString();
+        })->each(function ($dayLogs, $date) use (&$statsByDate, $totalStaff) {
+            $perStaffMasuk = [];
+
+            foreach ($dayLogs as $log) {
+                if (!$log->staff) {
+                    continue;
+                }
+
+                $staffId = $log->staff->id;
+                $time = $log->check_in->format('H:i:s');
+                if ($time >= '00:00:00' && $time <= '08:59:59') {
+                    $masuk = $log->check_in->format('H:i');
+                    if (!isset($perStaffMasuk[$staffId]) || $masuk < $perStaffMasuk[$staffId]) {
+                        $perStaffMasuk[$staffId] = $masuk;
+                    }
+                }
+            }
+
+            $hadir = 0;
+            $telat = 0;
+            foreach ($perStaffMasuk as $masukTime) {
+                if ($masukTime >= '07:10') {
+                    $telat++;
+                } else {
+                    $hadir++;
+                }
+            }
+
+            $tidakHadir = max($totalStaff - ($hadir + $telat), 0);
+
+            $statsByDate[$date] = [
+                'hadir' => $hadir,
+                'telat' => $telat,
+                'tidak_hadir' => $tidakHadir,
+            ];
+        });
+
+        $weeks = [];
+        $week = [];
+        $startOffset = $monthStart->dayOfWeekIso;
+        for ($i = 1; $i < $startOffset; $i++) {
+            $week[] = null;
+        }
+
+        $cursor = $monthStart->copy();
+        while ($cursor->lte($monthEnd)) {
+            $week[] = $cursor->copy();
+            if (count($week) === 7) {
+                $weeks[] = $week;
+                $week = [];
+            }
+            $cursor->addDay();
+        }
+
+        if (count($week) > 0) {
+            while (count($week) < 7) {
+                $week[] = null;
+            }
+            $weeks[] = $week;
+        }
+
+        $monthLabel = $monthStart->translatedFormat('F Y');
+
+        return view('staff_calendar', compact(
+            'month',
+            'monthLabel',
+            'weeks',
+            'statsByDate',
+            'totalStaff'
+        ));
+    }
 
     public function create()
     {
@@ -75,7 +295,6 @@ class StaffController extends Controller
                 'numeric',
                 'exists:fingerprint_templates,id', // Pastikan template ada di database
                 Rule::unique('staffs', 'id_template'), // Pastikan belum digunakan staff lain
-                Rule::unique('siswas', 'id_template'), // Pastikan belum digunakan siswa
             ],
         ]);
 
@@ -100,7 +319,6 @@ class StaffController extends Controller
                 'numeric',
                 'exists:fingerprint_templates,id', // Pastikan template ada di database
                 Rule::unique('staffs', 'id_template')->ignore($staff->id), // Ignore staff saat ini
-                Rule::unique('siswas', 'id_template'), // Pastikan belum digunakan siswa
             ],
         ]);
 

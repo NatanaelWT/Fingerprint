@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\LogKehadiran;
-use App\Models\Siswa;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +17,13 @@ class LogKehadiranController extends Controller
             'fingerprint_id' => 'required|integer|exists:fingerprint_templates,id',
         ]);
 
+        $staff = Staff::where('id_template', $validated['fingerprint_id'])->first();
+        if (!$staff) {
+            return response()->json([
+                'message' => 'Staff tidak ditemukan'
+            ], 404);
+        }
+
         $currentTime = Carbon::now();
         $currentHour = $currentTime->hour;
         $currentDate = $currentTime->toDateString();
@@ -25,19 +31,15 @@ class LogKehadiranController extends Controller
         $isMasukTime = $currentHour >= 0 && $currentHour < 9;
         $isPulangTime = $currentHour >= 9 && $currentHour < 24;
 
-        if (!$isMasukTime && !$isPulangTime) {
-            return response()->json(['message' => 'Diluar Waktu Absensi'], 400);
-        }
-
         // Tentukan tipe absensi dan rentang waktunya
         if ($isMasukTime) {
             $start = '00:00:00';
             $end = '08:59:59';
-            $type = 'masuk';
+            $type = 'Masuk';
         } else {
             $start = '09:00:00';
             $end = '23:59:59';
-            $type = 'pulang';
+            $type = 'Pulang';
         }
 
         // Cek apakah sudah ada log dengan tipe yang sama di hari ini
@@ -47,9 +49,10 @@ class LogKehadiranController extends Controller
             ->whereTime('check_in', '<=', $end)
             ->exists();
 
+        // Jika sudah absen
         if ($existingLogSameType) {
             return response()->json([
-                'message' => "Sudah $type hari ini"
+                'message' => "$type"
             ], 400);
         }
 
@@ -60,20 +63,8 @@ class LogKehadiranController extends Controller
         ]);
 
         // ===== Identifikasi pemilik fingerprint =====
-        $targetNumber = null;
-        $name = null;
-
-        $siswa = Siswa::where('id_template', $validated['fingerprint_id'])->first();
-        if ($siswa) {
-            $targetNumber = $this->formatPhoneNumber($siswa->nomor_ortu);
-            $name = $siswa->nama;
-        } else {
-            $staff = Staff::where('id_template', $validated['fingerprint_id'])->first();
-            if ($staff) {
-                $targetNumber = '6282158114721'; // Nomor statis untuk staff
-                $name = $staff->nama;
-            }
-        }
+        $targetNumber = '6281217739010'; // Nomor statis untuk staff
+        $name = $staff->nama;
 
         // ===== Kirim notifikasi =====
         if ($targetNumber && $name) {
@@ -94,27 +85,9 @@ class LogKehadiranController extends Controller
         }
 
         return response()->json([
-            'message' => "Absensi $type",
+            'message' => "$type",
             'data' => $log
         ], 201);
-    }
-
-    /**
-     * Format nomor telepon ke format internasional (62)
-     */
-    private function formatPhoneNumber($phone)
-    {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        
-        if (substr($phone, 0, 1) === '0') {
-            return '62' . substr($phone, 1);
-        }
-        
-        if (substr($phone, 0, 2) !== '62') {
-            return '62' . $phone;
-        }
-        
-        return $phone;
     }
 
     /**
@@ -124,8 +97,8 @@ class LogKehadiranController extends Controller
     {
         $hour = $time->hour;
 
-        if ($hour >= 0 && $hour < 10) return 'Masuk';
-        if ($hour >= 10 && $hour < 24) return 'Pulang';
+        if ($hour >= 0 && $hour < 9) return 'Masuk';
+        if ($hour >= 9 && $hour < 24) return 'Pulang';
         
         return 'Lainnya';
     }

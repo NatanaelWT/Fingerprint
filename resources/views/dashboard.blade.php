@@ -8,9 +8,7 @@
                 Selamat Datang di<br>Dashboard Pengmas <span class="text-indigo-400">Fingerprint</span>
             </h1>
             <p class="text-base md:text-lg text-slate-300 leading-relaxed tracking-normal">
-                Kelola data <span class="text-white font-medium">kehadiran</span>, 
-                <span class="text-white font-medium">siswa</span>, dan 
-                <span class="text-white font-medium">staff</span> melalui dashboard ini.
+                Kelola data <span class="text-white font-medium">kehadiran staff</span> melalui dashboard ini.
                 <br>
                 Gunakan menu di atas untuk mengelola data dan aktivitas Anda.
             </p>
@@ -18,8 +16,8 @@
             {{-- Ringkasan Kehadiran Hari Ini --}}
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-                    <p class="text-gray-300 text-sm">Total Siswa</p>
-                    <p class="text-2xl font-bold text-white">{{ $totalStudents }}</p>
+                    <p class="text-gray-300 text-sm">Total Staff</p>
+                    <p class="text-2xl font-bold text-white">{{ $totalStaff }}</p>
                 </div>
                 <div class="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
                     <p class="text-gray-300 text-sm">Hadir Hari Ini</p>
@@ -31,7 +29,7 @@
                 </div>
                 <div class="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
                     <p class="text-gray-300 text-sm">Tidak Hadir</p>
-                    <p class="text-2xl font-bold text-red-400">{{ $totalStudents - $presentCount }}</p>
+                    <p class="text-2xl font-bold text-red-400">{{ $totalStaff - $presentCount }}</p>
                 </div>
             </div>
         </div>
