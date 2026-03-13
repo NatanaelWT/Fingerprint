@@ -7,8 +7,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300">
           <div class="flex flex-col items-start">
+<<<<<<< HEAD
             <p class="text-sm text-gray-400">Total Staff</p>
             <p class="text-3xl font-bold text-white">{{ $totalStaff }}</p>
+=======
+            <p class="text-sm text-gray-400">Total Terdaftar</p>
+            <p class="text-3xl font-bold text-white">{{ $totalPeople }}</p>
+>>>>>>> 88b4e3dbf90c7c3d02312e075ebd6c8f9803d562
           </div>
         </div>
 
@@ -56,7 +61,11 @@
           <thead class="text-sm uppercase bg-gray-700 text-gray-300">
             <tr>
               <th class="border border-gray-600 px-5 py-3">Nama</th>
+<<<<<<< HEAD
               <th class="border border-gray-600 px-5 py-3">Jabatan</th>
+=======
+              <th class="border border-gray-600 px-5 py-3">Peran</th>
+>>>>>>> 88b4e3dbf90c7c3d02312e075ebd6c8f9803d562
               <th class="border border-gray-600 px-5 py-3">Waktu</th>
               <th class="border border-gray-600 px-5 py-3">Keterangan</th>
             </tr>
@@ -65,10 +74,27 @@
             @forelse($logs as $log)
               <tr class="hover:bg-gray-800 transition-colors duration-200">
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
+<<<<<<< HEAD
                   {{ optional($log->staff)->nama ?? 'Unknown' }}
                 </td>
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
                   {{ optional($log->staff)->jabatan ?? '-' }}
+=======
+                  @if ($log->siswa)
+                    {{ $log->siswa->nama }}
+                  @elseif($log->staff)
+                    {{ $log->staff->nama }}
+                  @else
+                    Unknown
+                  @endif
+                </td>
+                <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
+                  @if ($log->siswa)
+                    Siswa
+                  @elseif($log->staff)
+                    Staff
+                  @endif
+>>>>>>> 88b4e3dbf90c7c3d02312e075ebd6c8f9803d562
                 </td>
                 <td class="border border-gray-700 px-5 py-3 whitespace-nowrap">
                   {{ $log->check_in->translatedFormat('d F Y H:i:s') }}
@@ -79,7 +105,11 @@
               </tr>
             @empty
               <tr>
+<<<<<<< HEAD
                 <td colspan="4" class="border border-gray-700 px-5 py-3 text-gray-400">Tidak ada data kehadiran staff</td>
+=======
+                <td colspan="4" class="border border-gray-700 px-5 py-3 text-gray-400">Tidak ada data kehadiran</td>
+>>>>>>> 88b4e3dbf90c7c3d02312e075ebd6c8f9803d562
               </tr>
             @endforelse
           </tbody>
